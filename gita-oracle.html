@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gita Oracle — Ask Krishna</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    /* ── TOKEN SYSTEM ───────────────────────────────────────── */
+    :root {
+      --peacock:       #0E6E5E;   /* peacock feather teal */
+      --krishna-blue:  #1B3B7A;   /* Krishna's divine blue skin */
+      --blue-light:    #4D79D6;   /* dawn-on-Yamuna highlight */
+      --maroon:        #7A1F3D;   /* battlefield/Kurukshetra red */
+      --deep-night:    #060914;   /* Dwarka midnight */
+      --parchment:     #0F1726;   /* old scroll dark bg */
+      --scroll-cream:  #EDE6CC;   /* aged parchment */
+      --scroll-tan:    #B9AE86;   /* dried leaf */
+      --gold:          #C9971C;   /* temple gold */
+      --gold-light:    #F0CB52;   /* ornament highlight / flute glow */
+      --lotus-pink:    #C0557A;   /* lotus on the lake */
+      --text-primary:  #EDE6CC;
+      --text-dim:      #8C93A8;
+      --border-ornate: #2C4470;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'EB Garamond', Georgia, serif;
+      background-color: var(--deep-night);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ── BACKGROUND MANDALA ─────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(27,59,122,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 80% at 80% 100%, rgba(14,110,94,0.14) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 10% 50%, rgba(122,31,61,0.10) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── PEACOCK FEATHER PARTICLE FIELD ─────────────────────── */
+    .particle-field {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--gold-light);
+      opacity: 0;
+      animation: float-particle linear infinite;
+    }
+
+    @keyframes float-particle {
+      0%   { transform: translateY(110vh) translateX(0) scale(0); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-10vh) translateX(60px) scale(1.5); opacity: 0; }
+    }
+
+    /* ── LAYOUT ─────────────────────────────────────────────── */
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0 1rem 4rem;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    header {
+      width: 100%;
+      max-width: 860px;
+      text-align: center;
+      padding: 3.5rem 1rem 2.5rem;
+    }
+
+    .diya-row {
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+      margin-bottom: 1.6rem;
+    }
+    .diya {
+      font-size: 2rem;
+      animation: diya-flicker 2.4s ease-in-out infinite;
+    }
+    .diya:nth-child(2) { animation-delay: 0.4s; }
+    .diya:nth-child(3) { animation-delay: 0.8s; }
+    .diya:nth-child(4) { animation-delay: 1.2s; }
+    .diya:nth-child(5) { animation-delay: 1.6s; }
+
+    @keyframes diya-flicker {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.75; transform: scale(0.96) rotate(-2deg); }
+    }
+
+    .om-symbol {
+      font-size: 3.2rem;
+      color: var(--gold-light);
+      text-shadow: 0 0 24px rgba(240,203,82,0.6), 0 0 60px rgba(240,203,82,0.25);
+      display: block;
+      margin-bottom: 0.5rem;
+      animation: om-pulse 4s ease-in-out infinite;
+    }
+    @keyframes om-pulse {
+      0%, 100% { text-shadow: 0 0 24px rgba(240,203,82,0.6), 0 0 60px rgba(240,203,82,0.25); }
+      50%       { text-shadow: 0 0 40px rgba(240,203,82,0.9), 0 0 100px rgba(240,203,82,0.5); }
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: clamp(2rem, 6vw, 3.6rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: 0.04em;
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--blue-light) 50%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      margin-bottom: 0.4rem;
+    }
+
+    .subtitle {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.85rem, 2vw, 1.05rem);
+      color: var(--scroll-tan);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 1.4rem;
+    }
+
+    .divider-ornate {
+      width: 100%;
+      max-width: 560px;
+      height: 2px;
+      margin: 0 auto;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        var(--border-ornate) 20%,
+        var(--gold) 50%,
+        var(--border-ornate) 80%,
+        transparent 100%
+      );
+      position: relative;
+    }
+    .divider-ornate::before,
+    .divider-ornate::after {
+      content: '✦';
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      color: var(--gold);
+      font-size: 0.9rem;
+    }
+    .divider-ornate::before { left: 22%; }
+    .divider-ornate::after  { right: 22%; }
+
+    /* ── PARVA / THEME PILLS ────────────────────────────────── */
+    .kanda-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.55rem;
+      margin: 2rem 0 0.5rem;
+    }
+    .kanda-pill {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.9rem;
+      border: 1px solid var(--border-ornate);
+      border-radius: 2px;
+      color: var(--scroll-tan);
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .kanda-pill:hover {
+      border-color: var(--gold);
+      color: var(--gold-light);
+      background: rgba(240,203,82,0.08);
+    }
+
+    /* ── QUESTION PANEL ─────────────────────────────────────── */
+    .oracle-panel {
+      width: 100%;
+      max-width: 780px;
+      margin-top: 3rem;
+      background:
+        linear-gradient(145deg, rgba(15,23,38,0.95) 0%, rgba(10,14,24,0.98) 100%);
+      border: 1px solid var(--border-ornate);
+      border-radius: 4px;
+      box-shadow:
+        0 0 0 1px rgba(201,151,28,0.12),
+        0 8px 48px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(240,203,82,0.08);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* corner flourishes */
+    .oracle-panel::before,
+    .oracle-panel::after {
+      content: '';
+      position: absolute;
+      width: 48px; height: 48px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: 0.5;
+    }
+    .oracle-panel::before {
+      top: 8px; left: 8px;
+      border-width: 2px 0 0 2px;
+    }
+    .oracle-panel::after {
+      bottom: 8px; right: 8px;
+      border-width: 0 2px 2px 0;
+    }
+
+    .panel-header {
+      padding: 1.4rem 2rem 1rem;
+      border-bottom: 1px solid var(--border-ornate);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .panel-header-icon { font-size: 1.4rem; }
+    .panel-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--scroll-tan);
+    }
+
+    .panel-body { padding: 1.8rem 2rem 2rem; }
+
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--border-ornate);
+      border-radius: 3px;
+      color: var(--scroll-cream);
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.65;
+      padding: 1rem 1.2rem;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    textarea::placeholder { color: var(--text-dim); font-style: italic; }
+    textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,151,28,0.12);
+    }
+
+    .ask-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-ask {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.75rem 2.2rem;
+      background: linear-gradient(135deg, var(--krishna-blue) 0%, var(--peacock) 100%);
+      color: var(--scroll-cream);
+      border: 1px solid rgba(240,203,82,0.3);
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-ask::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(240,203,82,0.2), transparent);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .btn-ask:hover::before { opacity: 1; }
+    .btn-ask:hover {
+      box-shadow: 0 4px 20px rgba(27,59,122,0.5);
+      transform: translateY(-1px);
+    }
+    .btn-ask:active { transform: translateY(0); }
+    .btn-ask:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .loading-indicator {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-dim);
+      font-style: italic;
+      font-size: 0.95rem;
+    }
+    .loading-indicator.visible { display: flex; }
+    .dot-wave span {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: dot-bounce 1.2s ease-in-out infinite;
+    }
+    .dot-wave span:nth-child(2) { animation-delay: 0.2s; }
+    .dot-wave span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dot-bounce {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40%           { transform: scale(1);   opacity: 1; }
+    }
+
+    /* ── SUGGESTED QUESTIONS ────────────────────────────────── */
+    .suggestions {
+      margin-top: 1.6rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.6rem;
+    }
+    .suggestion-btn {
+      text-align: left;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--border-ornate);
+      border-radius: 3px;
+      padding: 0.65rem 0.9rem;
+      color: var(--text-dim);
+      font-family: 'EB Garamond', serif;
+      font-size: 0.9rem;
+      font-style: italic;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1.4;
+    }
+    .suggestion-btn:hover {
+      border-color: var(--blue-light);
+      color: var(--scroll-cream);
+      background: rgba(27,59,122,0.12);
+    }
+
+    /* ── N8N WEBHOOK CONFIG ─────────────────────────────────── */
+    .config-panel {
+      width: 100%;
+      max-width: 780px;
+      margin-top: 1.4rem;
+      background: rgba(15,23,38,0.7);
+      border: 1px solid rgba(44,68,112,0.4);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .config-toggle {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 0.9rem 1.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-dim);
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .config-toggle:hover { color: var(--scroll-tan); }
+    .config-body {
+      display: none;
+      padding: 1rem 1.6rem 1.4rem;
+      border-top: 1px solid rgba(44,68,112,0.3);
+    }
+    .config-body.open { display: block; }
+    .config-body label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.08em;
+    }
+    .config-body input {
+      width: 100%;
+      padding: 0.55rem 0.9rem;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border-ornate);
+      border-radius: 2px;
+      color: var(--scroll-cream);
+      font-family: monospace;
+      font-size: 0.85rem;
+    }
+    .config-body input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    /* ── DIALOG BOX ─────────────────────────────────────────── */
+    .dialog-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2,3,8,0.82);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .dialog-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .dialog-box {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      max-height: 88vh;
+      background: linear-gradient(170deg, #101A2E 0%, #090D17 100%);
+      border: 1px solid var(--border-ornate);
+      border-radius: 4px;
+      box-shadow:
+        0 0 0 1px rgba(240,203,82,0.15),
+        0 0 80px rgba(27,59,122,0.25),
+        0 32px 80px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(28px) scale(0.97);
+      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+    }
+    .dialog-overlay.open .dialog-box {
+      transform: translateY(0) scale(1);
+    }
+
+    /* ornate corners */
+    .dialog-box::before,
+    .dialog-box::after,
+    .dialog-corner-br,
+    .dialog-corner-tl {
+      position: absolute;
+      width: 56px; height: 56px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: 0.45;
+      pointer-events: none;
+    }
+    .dialog-box::before { content:''; top: 6px; left: 6px; border-width: 2px 0 0 2px; }
+    .dialog-box::after  { content:''; top: 6px; right: 6px; border-width: 2px 2px 0 0; }
+    .dialog-corner-br { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; }
+    .dialog-corner-tl { bottom: 6px; left: 6px; border-width: 0 0 2px 2px; }
+
+    .dialog-head {
+      padding: 1.4rem 2rem 1.1rem;
+      border-bottom: 1px solid var(--border-ornate);
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    .dialog-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--krishna-blue), var(--peacock));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      box-shadow: 0 0 18px rgba(27,59,122,0.5);
+    }
+    .dialog-head-text { flex: 1; }
+    .dialog-speaker {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.25rem;
+    }
+    .dialog-question-preview {
+      font-style: italic;
+      color: var(--text-dim);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .dialog-close {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 1.4rem;
+      cursor: pointer;
+      padding: 0.2rem 0.4rem;
+      border-radius: 2px;
+      transition: color 0.2s;
+      flex-shrink: 0;
+      align-self: flex-start;
+    }
+    .dialog-close:hover { color: var(--scroll-cream); }
+
+    .dialog-body {
+      overflow-y: auto;
+      padding: 2rem;
+      flex: 1;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-ornate) transparent;
+    }
+
+    .response-verse-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .response-verse-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border-ornate), transparent);
+    }
+
+    .response-text {
+      font-size: 1.1rem;
+      line-height: 1.82;
+      color: var(--scroll-cream);
+    }
+    .response-text p { margin-bottom: 1.1em; }
+    .response-text p:last-child { margin-bottom: 0; }
+    .response-text strong { color: var(--gold-light); font-weight: 500; }
+    .response-text em { color: var(--scroll-tan); }
+
+    .dialog-footer {
+      padding: 1rem 2rem 1.2rem;
+      border-top: 1px solid var(--border-ornate);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .dialog-footer-badge {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.1em;
+    }
+    .btn-ask-another {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.5rem 1.4rem;
+      background: none;
+      border: 1px solid var(--border-ornate);
+      border-radius: 2px;
+      color: var(--scroll-tan);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-ask-another:hover {
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+
+    /* ── ERROR STATE ────────────────────────────────────────── */
+    .error-box {
+      background: rgba(122,31,61,0.18);
+      border: 1px solid rgba(122,31,61,0.45);
+      border-radius: 3px;
+      padding: 1rem 1.2rem;
+      color: #E8847A;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      display: none;
+      margin-top: 1rem;
+    }
+    .error-box.visible { display: block; }
+
+    /* ── FOOTER ─────────────────────────────────────────────── */
+    footer {
+      margin-top: 4rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.12em;
+    }
+
+    /* ── SCROLLBAR STYLING ──────────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-ornate); border-radius: 10px; }
+
+    /* ── MOBILE ─────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .panel-body, .dialog-body, .dialog-head { padding: 1.2rem; }
+      .panel-header { padding: 1rem 1.2rem 0.8rem; }
+      .dialog-footer { padding: 0.8rem 1.2rem; }
+      h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div class="particle-field" id="particles"></div>
+
+<div class="page-wrap">
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="diya-row">
+      <span class="diya">🪔</span>
+      <span class="diya">🦚</span>
+      <span class="diya">🪔</span>
+      <span class="diya">🦚</span>
+      <span class="diya">🪔</span>
+    </div>
+    <span class="om-symbol">ॐ</span>
+    <h1>Gita Oracle</h1>
+    <p class="subtitle">Ask the Lord — Wisdom of Krishna</p>
+    <div class="divider-ornate"></div>
+
+    <div class="kanda-pills">
+      <span class="kanda-pill" onclick="insertKanda('Bhagavad Gita')">📜 Bhagavad Gita</span>
+      <span class="kanda-pill" onclick="insertKanda('Adi Parva')">🌱 Adi Parva</span>
+      <span class="kanda-pill" onclick="insertKanda('Sabha Parva')">🎲 Sabha Parva</span>
+      <span class="kanda-pill" onclick="insertKanda('Vana Parva')">🌲 Vana Parva</span>
+      <span class="kanda-pill" onclick="insertKanda('Udyoga Parva')">🐚 Udyoga Parva</span>
+      <span class="kanda-pill" onclick="insertKanda('Kurukshetra War')">⚔️ Kurukshetra War</span>
+    </div>
+  </header>
+
+  <!-- ── ORACLE PANEL ── -->
+  <div class="oracle-panel">
+    <div class="panel-header">
+      <span class="panel-header-icon">🪈</span>
+      <span class="panel-title">Pose your question to the Lord</span>
+    </div>
+    <div class="panel-body">
+      <textarea
+        id="question"
+        placeholder="Ask about Lord Krishna, Arjuna's dilemma, the Pandavas and Kauravas, dharma, karma, or any chapter of the Mahabharata and Gita…"
+        rows="4"
+      ></textarea>
+
+      <div class="ask-row">
+        <button class="btn-ask" id="askBtn" onclick="askOracle()">
+          🪈 &nbsp;Seek the Oracle
+        </button>
+        <div class="loading-indicator" id="loader">
+          <div class="dot-wave">
+            <span></span><span></span><span></span>
+          </div>
+          <span>Consulting the Lord…</span>
+        </div>
+      </div>
+
+      <div class="error-box" id="errorBox"></div>
+
+      <!-- Suggested questions -->
+      <div class="suggestions">
+        <button class="suggestion-btn" onclick="fillQ('Why did Arjuna refuse to fight at Kurukshetra?')">Why did Arjuna refuse to fight at Kurukshetra?</button>
+        <button class="suggestion-btn" onclick="fillQ('What does Krishna mean by Nishkama Karma, action without attachment?')">What does Krishna mean by Nishkama Karma, action without attachment?</button>
+        <button class="suggestion-btn" onclick="fillQ('What is the significance of the game of dice between the Pandavas and Kauravas?')">What is the significance of the game of dice between the Pandavas and Kauravas?</button>
+        <button class="suggestion-btn" onclick="fillQ('What is the difference between the soul (Atman) and the body according to the Gita?')">What is the difference between the soul (Atman) and the body according to the Gita?</button>
+        <button class="suggestion-btn" onclick="fillQ('Tell me about Krishna\'s Vishwaroopa, his cosmic form shown to Arjuna.')">Tell me about Krishna's Vishwaroopa, his cosmic form shown to Arjuna.</button>
+        <button class="suggestion-btn" onclick="fillQ('What are the paths of Karma Yoga, Bhakti Yoga, and Jnana Yoga?')">What are the paths of Karma Yoga, Bhakti Yoga, and Jnana Yoga?</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WEBHOOK CONFIG ── -->
+  <div class="config-panel">
+    <button class="config-toggle" onclick="toggleConfig()">
+      <span>⚙️ &nbsp;Webhook / n8n Configuration</span>
+      <span id="configArrow">▼</span>
+    </button>
+    <div class="config-body" id="configBody">
+      <label for="webhookUrl">n8n Webhook URL</label>
+      <input
+        type="text"
+        id="webhookUrl"
+        placeholder="https://your-n8n-instance.com/webhook/gita-oracle"
+        value=""
+      />
+      <p style="margin-top:0.7rem; font-size:0.8rem; color:var(--text-dim);">
+        Leave blank to call the Groq API directly from this page. When set, all questions route through your n8n workflow.
+      </p>
+    </div>
+  </div>
+
+  <footer>
+    <p>🦚 &nbsp; Powered by Groq AI &nbsp;·&nbsp; Inspired by the Bhagavad Gita & Mahabharata &nbsp; 🦚</p>
+    <p style="margin-top:0.4rem; opacity:0.5;">हरे कृष्ण</p>
+  </footer>
+
+</div><!-- end page-wrap -->
+
+
+<!-- ── DIALOG BOX ── -->
+<div class="dialog-overlay" id="dialogOverlay" onclick="closeDialogOnOverlay(event)">
+  <div class="dialog-box" id="dialogBox">
+    <div class="dialog-corner-br"></div>
+    <div class="dialog-corner-tl"></div>
+
+    <div class="dialog-head">
+      <div class="dialog-avatar">🪈</div>
+      <div class="dialog-head-text">
+        <div class="dialog-speaker">Oracle of Krishna</div>
+        <div class="dialog-question-preview" id="dialogQuestion"></div>
+      </div>
+      <button class="dialog-close" onclick="closeDialog()" title="Close">✕</button>
+    </div>
+
+    <div class="dialog-body">
+      <div class="response-verse-label">📜 &nbsp; The Lord Speaks</div>
+      <div class="response-text" id="dialogResponse"></div>
+    </div>
+
+    <div class="dialog-footer">
+      <span class="dialog-footer-badge">🦚 &nbsp; Gita Oracle &nbsp;·&nbsp; ॐ</span>
+      <button class="btn-ask-another" onclick="closeDialog()">Ask Another ✦</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  /* ── PARTICLE FIELD ── */
+  const field = document.getElementById('particles');
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+    p.style.animationDuration = (8 + Math.random() * 14) + 's';
+    p.style.animationDelay = (Math.random() * 12) + 's';
+    const colors = ['#F0CB52','#1B3B7A','#0E6E5E','#C9971C'];
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    field.appendChild(p);
+  }
+
+  /* ── HELPERS ── */
+  function fillQ(text) {
+    document.getElementById('question').value = text;
+    document.getElementById('question').focus();
+  }
+
+  function insertKanda(parva) {
+    const q = document.getElementById('question');
+    const val = q.value.trim();
+    if (!val) {
+      q.value = 'Tell me about the ' + parva + '.';
+    } else {
+      q.value = val + ' (from the ' + parva + ')';
+    }
+    q.focus();
+  }
+
+  function toggleConfig() {
+    const body = document.getElementById('configBody');
+    const arrow = document.getElementById('configArrow');
+    body.classList.toggle('open');
+    arrow.textContent = body.classList.contains('open') ? '▲' : '▼';
+  }
+
+  /* ── DIALOG CONTROL ── */
+  function openDialog(question, responseHtml) {
+    document.getElementById('dialogQuestion').textContent = '"' + question + '"';
+    document.getElementById('dialogResponse').innerHTML = responseHtml;
+    document.getElementById('dialogOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDialog() {
+    document.getElementById('dialogOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function closeDialogOnOverlay(e) {
+    if (e.target === document.getElementById('dialogOverlay')) closeDialog();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDialog();
+  });
+
+  /* ── FORMAT RESPONSE ── */
+  function formatResponse(text) {
+    const paragraphs = text.trim().split(/\n\n+/);
+    return paragraphs.map(p => {
+      // Bold **text**
+      p = p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // Italic *text*
+      p = p.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      return '<p>' + p.replace(/\n/g, '<br>') + '</p>';
+    }).join('');
+  }
+
+  /* ── MAIN ASK FUNCTION ── */
+  async function askOracle() {
+    const question = document.getElementById('question').value.trim();
+    if (!question) {
+      document.getElementById('question').focus();
+      return;
+    }
+
+    const askBtn = document.getElementById('askBtn');
+    const loader  = document.getElementById('loader');
+    const errorBox = document.getElementById('errorBox');
+
+    askBtn.disabled = true;
+    loader.classList.add('visible');
+    errorBox.classList.remove('visible');
+
+    const webhookUrl = document.getElementById('webhookUrl').value.trim();
+
+    try {
+      let responseText = '';
+
+      if (webhookUrl) {
+        /* ── ROUTE VIA n8n WEBHOOK ── */
+        const res = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question })
+        });
+        if (!res.ok) throw new Error('n8n webhook returned ' + res.status);
+        const data = await res.json();
+        // Accept { answer } or { response } or { message } or raw string
+        responseText = data.answer || data.response || data.message || data.text
+          || (typeof data === 'string' ? data : JSON.stringify(data));
+
+      } else {
+        /* ── DIRECT GROQ API CALL ── */
+        // NOTE: For production, call via your n8n webhook (set above) to keep your API key secure.
+        const GROQ_API_KEY = 'YOUR_GROQ_API_KEY_HERE'; // Replace or use n8n
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + GROQ_API_KEY
+          },
+          body: JSON.stringify({
+            model: 'openai/gpt-oss-120b',
+            temperature: 0.75,
+            max_tokens: 800,
+            messages: [
+              {
+                role: 'system',
+                content: `You are Lord Krishna, the divine charioteer and teacher who revealed the Bhagavad Gita to Arjuna on the battlefield of Kurukshetra. Answer every question with deep spiritual wisdom, poetic flourish, and encyclopedic knowledge of both the Mahabharata's eighteen parvas and the eighteen chapters of the Bhagavad Gita. Reference specific characters (Arjuna, Yudhishthira, Bhima, Nakula, Sahadeva, Draupadi, Duryodhana, Karna, Bhishma, Drona, Vidura, Kunti, Gandhari, etc.), events, shlokas, and their moral and philosophical teachings — dharma, karma, the nature of the Atman, the paths of Karma Yoga, Bhakti Yoga, and Jnana Yoga. Use a reverent, compassionate, and gently instructive tone, as a teacher guiding a devoted but troubled student. Keep responses between 150-350 words. Occasionally use Sanskrit terms with brief explanations. Format your response in clear paragraphs.`
+              },
+              {
+                role: 'user',
+                content: question
+              }
+            ]
+          })
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error?.message || 'Groq API error ' + res.status);
+        }
+        const data = await res.json();
+        responseText = data.choices?.[0]?.message?.content || 'No response received.';
+      }
+
+      openDialog(question, formatResponse(responseText));
+
+    } catch (err) {
+      errorBox.textContent = '🔥 The oracle could not be reached: ' + err.message
+        + '. Please set your n8n webhook URL or a valid Groq API key.';
+      errorBox.classList.add('visible');
+    } finally {
+      askBtn.disabled = false;
+      loader.classList.remove('visible');
+    }
+  }
+
+  /* ── ENTER KEY SUBMIT ── */
+  document.getElementById('question').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) askOracle();
+  });
+</script>
+</body>
+</html>
