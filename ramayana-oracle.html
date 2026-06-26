@@ -6,914 +6,491 @@
   <title>Ramayana Oracle — Ask Valmiki</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
   <style>
-    /* ── TOKEN SYSTEM ───────────────────────────────────────── */
     :root {
-      --saffron:       #E8600A;   /* sacred flame */
-      --gold:          #C9900C;   /* temple gold */
-      --gold-light:    #F0C040;   /* ornament highlight */
-      --crimson:       #8B1A1A;   /* warrior red */
-      --deep-night:    #0D0804;   /* Ayodhya midnight */
-      --parchment:     #1C1208;   /* old scroll dark bg */
-      --scroll-cream:  #F5E8C0;   /* aged parchment */
-      --scroll-tan:    #D4B483;   /* dried leaf */
-      --green-forest:  #2E4A1E;   /* Dandaka forest */
-      --lotus-pink:    #C0557A;   /* Sita's lotus */
-      --text-primary:  #F5E8C0;
-      --text-dim:      #A0896A;
-      --border-ornate: #6B4C1E;
+      --saffron:     #C8500A;
+      --gold:        #A87008;
+      --gold-light:  #D4900E;
+      --crimson:     #8B1A1A;
+      --bg:          #FDF6E9;
+      --bg2:         #F7EDD8;
+      --bg3:         #EFE0C0;
+      --text:        #2A1800;
+      --text-mid:    #5C3A10;
+      --text-dim:    #9A7040;
+      --border:      #C8A060;
+      --border-light:#E0C080;
+      --card-bg:     #FFFBF2;
+      --shadow:      rgba(100,60,0,0.13);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'EB Garamond', Georgia, serif;
-      background-color: var(--deep-night);
-      color: var(--text-primary);
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
-      position: relative;
     }
 
-    /* ── BACKGROUND MANDALA ─────────────────────────────────── */
+    /* Subtle parchment texture overlay */
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,120,10,0.12) 0%, transparent 70%),
-        radial-gradient(ellipse 60% 80% at 80% 100%, rgba(139,26,26,0.10) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 40% at 10% 50%, rgba(46,74,30,0.08) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
+        radial-gradient(ellipse 70% 50% at 50% 0%, rgba(220,150,30,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 90% 100%, rgba(139,26,26,0.05) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
     }
 
-    /* ── LOTUS PARTICLE FIELD ───────────────────────────────── */
-    .particle-field {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
+    /* Floating petals */
+    .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
     .particle {
-      position: absolute;
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      background: var(--gold-light);
-      opacity: 0;
-      animation: float-particle linear infinite;
+      position: absolute; border-radius: 50%;
+      opacity: 0; animation: rise linear infinite;
+    }
+    @keyframes rise {
+      0%   { transform: translateY(110vh) translateX(0); opacity: 0; }
+      10%  { opacity: 0.5; }
+      90%  { opacity: 0.2; }
+      100% { transform: translateY(-10vh) translateX(30px); opacity: 0; }
     }
 
-    @keyframes float-particle {
-      0%   { transform: translateY(110vh) translateX(0) scale(0); opacity: 0; }
-      10%  { opacity: 0.6; }
-      90%  { opacity: 0.3; }
-      100% { transform: translateY(-10vh) translateX(60px) scale(1.5); opacity: 0; }
+    .wrap {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      min-height: 100vh; padding: 0 1rem 4rem;
     }
 
-    /* ── LAYOUT ─────────────────────────────────────────────── */
-    .page-wrap {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 0 1rem 4rem;
-    }
-
-    /* ── HEADER ─────────────────────────────────────────────── */
+    /* ── HEADER ── */
     header {
-      width: 100%;
-      max-width: 860px;
-      text-align: center;
-      padding: 3.5rem 1rem 2.5rem;
+      width: 100%; max-width: 820px;
+      text-align: center; padding: 3rem 1rem 2rem;
     }
 
-    .diya-row {
-      display: flex;
-      justify-content: center;
-      gap: 1.2rem;
-      margin-bottom: 1.6rem;
-    }
-    .diya {
-      font-size: 2rem;
-      animation: diya-flicker 2.4s ease-in-out infinite;
-    }
-    .diya:nth-child(2) { animation-delay: 0.4s; }
-    .diya:nth-child(3) { animation-delay: 0.8s; }
-    .diya:nth-child(4) { animation-delay: 1.2s; }
-    .diya:nth-child(5) { animation-delay: 1.6s; }
-
-    @keyframes diya-flicker {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%       { opacity: 0.75; transform: scale(0.96) rotate(-2deg); }
+    .diyas { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.4rem; }
+    .diya  { font-size: 1.9rem; animation: flicker 2.4s ease-in-out infinite; }
+    .diya:nth-child(2) { animation-delay:.4s; }
+    .diya:nth-child(3) { animation-delay:.8s; }
+    .diya:nth-child(4) { animation-delay:1.2s; }
+    .diya:nth-child(5) { animation-delay:1.6s; }
+    @keyframes flicker {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:.65; transform:scale(.93) rotate(-2deg); }
     }
 
-    .om-symbol {
-      font-size: 3.2rem;
-      color: var(--gold-light);
-      text-shadow: 0 0 24px rgba(240,192,64,0.6), 0 0 60px rgba(240,192,64,0.25);
-      display: block;
-      margin-bottom: 0.5rem;
-      animation: om-pulse 4s ease-in-out infinite;
+    .om {
+      font-size: 2.8rem; display: block; margin-bottom: .35rem;
+      color: var(--saffron);
+      text-shadow: 0 2px 16px rgba(200,80,10,0.25);
+      animation: om-glow 4s ease-in-out infinite;
     }
-    @keyframes om-pulse {
-      0%, 100% { text-shadow: 0 0 24px rgba(240,192,64,0.6), 0 0 60px rgba(240,192,64,0.25); }
-      50%       { text-shadow: 0 0 40px rgba(240,192,64,0.9), 0 0 100px rgba(240,192,64,0.5); }
+    @keyframes om-glow {
+      0%,100% { text-shadow: 0 2px 16px rgba(200,80,10,0.25); }
+      50%      { text-shadow: 0 2px 30px rgba(200,80,10,0.55), 0 0 60px rgba(200,80,10,0.2); }
     }
 
     h1 {
       font-family: 'Cinzel Decorative', cursive;
-      font-size: clamp(2rem, 6vw, 3.6rem);
-      font-weight: 900;
-      line-height: 1.1;
-      letter-spacing: 0.04em;
-      background: linear-gradient(135deg, var(--gold-light) 0%, var(--saffron) 50%, var(--gold) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-shadow: none;
-      margin-bottom: 0.4rem;
+      font-size: clamp(1.9rem, 5.5vw, 3.3rem);
+      font-weight: 900; line-height: 1.1; letter-spacing: .04em;
+      background: linear-gradient(135deg, var(--saffron) 0%, #8B1A1A 60%, var(--gold) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: .35rem;
     }
 
     .subtitle {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(0.85rem, 2vw, 1.05rem);
-      color: var(--scroll-tan);
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      margin-bottom: 1.4rem;
+      font-family: 'Cinzel', serif; font-size: .95rem; letter-spacing: .22em;
+      text-transform: uppercase; color: var(--text-mid); margin-bottom: 1.4rem;
     }
 
-    .divider-ornate {
-      width: 100%;
-      max-width: 560px;
-      height: 2px;
-      margin: 0 auto;
-      background: linear-gradient(90deg,
-        transparent 0%,
-        var(--border-ornate) 20%,
-        var(--gold) 50%,
-        var(--border-ornate) 80%,
-        transparent 100%
-      );
+    .divider {
+      width: 100%; max-width: 500px; height: 2px; margin: 0 auto;
+      background: linear-gradient(90deg, transparent, var(--border-light) 20%, var(--gold) 50%, var(--border-light) 80%, transparent);
       position: relative;
     }
-    .divider-ornate::before,
-    .divider-ornate::after {
-      content: '✦';
-      position: absolute;
-      top: 50%; transform: translateY(-50%);
-      color: var(--gold);
-      font-size: 0.9rem;
+    .divider::before, .divider::after {
+      content:'✦'; position:absolute; top:50%; transform:translateY(-50%);
+      color:var(--gold); font-size:.85rem;
     }
-    .divider-ornate::before { left: 22%; }
-    .divider-ornate::after  { right: 22%; }
+    .divider::before{left:22%;} .divider::after{right:22%;}
 
-    /* ── CHAPTER CARDS ──────────────────────────────────────── */
-    .kanda-pills {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.55rem;
-      margin: 2rem 0 0.5rem;
+    /* Kanda pills */
+    .kandas { display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem; margin:1.8rem 0 .5rem; }
+    .kanda {
+      font-family:'Cinzel',serif; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase;
+      padding:.32rem .85rem; border:1px solid var(--border-light); border-radius:2px;
+      color:var(--text-mid); background:rgba(200,160,96,0.08); cursor:pointer; transition:all .2s;
     }
-    .kanda-pill {
-      font-family: 'Cinzel', serif;
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.35rem 0.9rem;
-      border: 1px solid var(--border-ornate);
-      border-radius: 2px;
-      color: var(--scroll-tan);
-      background: rgba(255,255,255,0.03);
-      cursor: pointer;
-      transition: all 0.25s;
-    }
-    .kanda-pill:hover {
-      border-color: var(--gold);
-      color: var(--gold-light);
-      background: rgba(240,192,64,0.08);
-    }
+    .kanda:hover { border-color:var(--saffron); color:var(--saffron); background:rgba(200,80,10,.07); }
 
-    /* ── QUESTION PANEL ─────────────────────────────────────── */
-    .oracle-panel {
-      width: 100%;
-      max-width: 780px;
-      margin-top: 3rem;
-      background:
-        linear-gradient(145deg, rgba(28,18,8,0.95) 0%, rgba(20,12,4,0.98) 100%);
-      border: 1px solid var(--border-ornate);
-      border-radius: 4px;
+    /* ── MAIN CARD ── */
+    .card {
+      width:100%; max-width:760px; margin-top:2.6rem;
+      background:var(--card-bg);
+      border:1px solid var(--border-light); border-radius:6px;
       box-shadow:
-        0 0 0 1px rgba(201,144,12,0.12),
-        0 8px 48px rgba(0,0,0,0.6),
-        inset 0 1px 0 rgba(240,192,64,0.08);
-      overflow: hidden;
-      position: relative;
+        0 0 0 1px rgba(200,160,96,0.18),
+        0 4px 32px var(--shadow),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+      position:relative; overflow:hidden;
     }
 
-    /* corner flourishes */
-    .oracle-panel::before,
-    .oracle-panel::after {
-      content: '';
-      position: absolute;
-      width: 48px; height: 48px;
-      border-color: var(--gold);
-      border-style: solid;
-      opacity: 0.5;
+    /* Corner flourishes */
+    .card::before,.card::after {
+      content:''; position:absolute;
+      width:44px; height:44px;
+      border-color:var(--border); border-style:solid; opacity:.45;
     }
-    .oracle-panel::before {
-      top: 8px; left: 8px;
-      border-width: 2px 0 0 2px;
-    }
-    .oracle-panel::after {
-      bottom: 8px; right: 8px;
-      border-width: 0 2px 2px 0;
-    }
+    .card::before{top:8px;left:8px;border-width:2px 0 0 2px;}
+    .card::after{bottom:8px;right:8px;border-width:0 2px 2px 0;}
 
-    .panel-header {
-      padding: 1.4rem 2rem 1rem;
-      border-bottom: 1px solid var(--border-ornate);
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
+    .card-head {
+      padding:1.2rem 1.8rem .9rem;
+      background:linear-gradient(to bottom, var(--bg2), var(--card-bg));
+      border-bottom:1px solid var(--border-light);
+      display:flex; align-items:center; gap:.7rem;
     }
-    .panel-header-icon { font-size: 1.4rem; }
-    .panel-title {
-      font-family: 'Cinzel', serif;
-      font-size: 0.95rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--scroll-tan);
-    }
+    .card-head-icon{font-size:1.3rem;}
+    .card-head-title{font-family:'Cinzel',serif;font-size:.88rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-mid);}
 
-    .panel-body { padding: 1.8rem 2rem 2rem; }
+    .card-body{padding:1.6rem 1.8rem 1.8rem;}
 
     textarea {
-      width: 100%;
-      min-height: 110px;
-      background: rgba(0,0,0,0.35);
-      border: 1px solid var(--border-ornate);
-      border-radius: 3px;
-      color: var(--scroll-cream);
-      font-family: 'EB Garamond', Georgia, serif;
-      font-size: 1.1rem;
-      line-height: 1.65;
-      padding: 1rem 1.2rem;
-      resize: vertical;
-      outline: none;
-      transition: border-color 0.25s, box-shadow 0.25s;
+      width:100%; min-height:100px;
+      background:var(--bg); border:1px solid var(--border-light); border-radius:4px;
+      color:var(--text); font-family:'EB Garamond',serif; font-size:1.08rem;
+      line-height:1.65; padding:.9rem 1.1rem; resize:vertical; outline:none;
+      transition:border-color .25s,box-shadow .25s;
     }
-    textarea::placeholder { color: var(--text-dim); font-style: italic; }
-    textarea:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(201,144,12,0.12);
-    }
+    textarea::placeholder{color:var(--text-dim);font-style:italic;}
+    textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(168,112,8,.1);}
 
-    .ask-row {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-top: 1.2rem;
-      flex-wrap: wrap;
-    }
+    .ask-row{display:flex;align-items:center;gap:1rem;margin-top:1.1rem;flex-wrap:wrap;}
 
     .btn-ask {
-      font-family: 'Cinzel', serif;
-      font-size: 0.9rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      padding: 0.75rem 2.2rem;
-      background: linear-gradient(135deg, var(--saffron) 0%, var(--crimson) 100%);
-      color: var(--scroll-cream);
-      border: 1px solid rgba(240,192,64,0.3);
-      border-radius: 3px;
-      cursor: pointer;
-      transition: all 0.25s;
-      position: relative;
-      overflow: hidden;
+      font-family:'Cinzel',serif; font-size:.88rem; letter-spacing:.13em; text-transform:uppercase;
+      padding:.7rem 2rem;
+      background:linear-gradient(135deg, var(--saffron) 0%, var(--crimson) 100%);
+      color:#FFF8F0; border:1px solid rgba(200,80,10,.3); border-radius:3px;
+      cursor:pointer; transition:all .25s;
+      box-shadow:0 2px 10px rgba(200,80,10,.2);
     }
-    .btn-ask::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(240,192,64,0.2), transparent);
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
-    .btn-ask:hover::before { opacity: 1; }
-    .btn-ask:hover {
-      box-shadow: 0 4px 20px rgba(232,96,10,0.4);
-      transform: translateY(-1px);
-    }
-    .btn-ask:active { transform: translateY(0); }
-    .btn-ask:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
+    .btn-ask:hover{box-shadow:0 4px 20px rgba(200,80,10,.35);transform:translateY(-1px);}
+    .btn-ask:active{transform:translateY(0);}
+    .btn-ask:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 
-    .loading-indicator {
-      display: none;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--text-dim);
-      font-style: italic;
-      font-size: 0.95rem;
+    .loader{display:none;align-items:center;gap:.5rem;color:var(--text-dim);font-style:italic;}
+    .loader.on{display:flex;}
+    .dots span{
+      display:inline-block;width:6px;height:6px;border-radius:50%;
+      background:var(--gold);animation:bounce 1.2s ease-in-out infinite;
     }
-    .loading-indicator.visible { display: flex; }
-    .dot-wave span {
-      display: inline-block;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--gold);
-      animation: dot-bounce 1.2s ease-in-out infinite;
-    }
-    .dot-wave span:nth-child(2) { animation-delay: 0.2s; }
-    .dot-wave span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes dot-bounce {
-      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-      40%           { transform: scale(1);   opacity: 1; }
-    }
+    .dots span:nth-child(2){animation-delay:.2s;} .dots span:nth-child(3){animation-delay:.4s;}
+    @keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4;}40%{transform:scale(1);opacity:1;}}
 
-    /* ── SUGGESTED QUESTIONS ────────────────────────────────── */
-    .suggestions {
-      margin-top: 1.6rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 0.6rem;
+    /* Suggestions */
+    .suggestions{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:.55rem;margin-top:1.4rem;}
+    .sug {
+      text-align:left; background:var(--bg2); border:1px solid var(--border-light);
+      border-radius:3px; padding:.6rem .85rem; color:var(--text-dim);
+      font-family:'EB Garamond',serif;font-size:.9rem;font-style:italic;
+      cursor:pointer; transition:all .2s; line-height:1.4;
     }
-    .suggestion-btn {
-      text-align: left;
-      background: rgba(255,255,255,0.025);
-      border: 1px solid var(--border-ornate);
-      border-radius: 3px;
-      padding: 0.65rem 0.9rem;
-      color: var(--text-dim);
-      font-family: 'EB Garamond', serif;
-      font-size: 0.9rem;
-      font-style: italic;
-      cursor: pointer;
-      transition: all 0.2s;
-      line-height: 1.4;
-    }
-    .suggestion-btn:hover {
-      border-color: var(--saffron);
-      color: var(--scroll-cream);
-      background: rgba(232,96,10,0.07);
-    }
+    .sug:hover{border-color:var(--saffron);color:var(--saffron);background:rgba(200,80,10,.05);}
 
-    /* ── N8N WEBHOOK CONFIG ─────────────────────────────────── */
-    .config-panel {
-      width: 100%;
-      max-width: 780px;
-      margin-top: 1.4rem;
-      background: rgba(28,18,8,0.7);
-      border: 1px solid rgba(107,76,30,0.4);
-      border-radius: 3px;
-      overflow: hidden;
+    .error {
+      margin-top:1rem; padding:.9rem 1.1rem;
+      background:#FFF0EE; border:1px solid rgba(180,60,60,.3); border-radius:3px;
+      color:#8B2020; font-size:.92rem; line-height:1.5; display:none;
     }
-    .config-toggle {
-      width: 100%;
-      background: none;
-      border: none;
-      padding: 0.9rem 1.6rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: var(--text-dim);
-      font-family: 'Cinzel', serif;
-      font-size: 0.78rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-    .config-toggle:hover { color: var(--scroll-tan); }
-    .config-body {
-      display: none;
-      padding: 1rem 1.6rem 1.4rem;
-      border-top: 1px solid rgba(107,76,30,0.3);
-    }
-    .config-body.open { display: block; }
-    .config-body label {
-      display: block;
-      font-size: 0.8rem;
-      color: var(--text-dim);
-      margin-bottom: 0.4rem;
-      letter-spacing: 0.08em;
-    }
-    .config-body input {
-      width: 100%;
-      padding: 0.55rem 0.9rem;
-      background: rgba(0,0,0,0.4);
-      border: 1px solid var(--border-ornate);
-      border-radius: 2px;
-      color: var(--scroll-cream);
-      font-family: monospace;
-      font-size: 0.85rem;
-    }
-    .config-body input:focus {
-      outline: none;
-      border-color: var(--gold);
-    }
+    .error.on{display:block;}
 
-    /* ── DIALOG BOX ─────────────────────────────────────────── */
-    .dialog-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(5,3,1,0.82);
-      backdrop-filter: blur(6px);
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s ease;
+    /* ── DIALOG ── */
+    .overlay {
+      position:fixed; inset:0;
+      background:rgba(40,20,0,.55); backdrop-filter:blur(5px);
+      z-index:100; display:flex; align-items:center; justify-content:center; padding:1rem;
+      opacity:0; pointer-events:none; transition:opacity .3s;
     }
-    .dialog-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-    }
+    .overlay.open{opacity:1;pointer-events:all;}
 
-    .dialog-box {
-      position: relative;
-      width: 100%;
-      max-width: 700px;
-      max-height: 88vh;
-      background: linear-gradient(170deg, #1F1408 0%, #130D05 100%);
-      border: 1px solid var(--border-ornate);
-      border-radius: 4px;
+    .dialog {
+      position:relative; width:100%; max-width:680px; max-height:88vh;
+      background:linear-gradient(165deg, #FFFCF4 0%, #FFF6E0 100%);
+      border:1px solid var(--border); border-radius:6px;
       box-shadow:
-        0 0 0 1px rgba(240,192,64,0.15),
-        0 0 80px rgba(201,144,12,0.18),
-        0 32px 80px rgba(0,0,0,0.8);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      transform: translateY(28px) scale(0.97);
-      transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+        0 0 0 1px rgba(200,160,80,.25),
+        0 0 60px rgba(120,70,0,.15),
+        0 24px 70px rgba(0,0,0,.25);
+      display:flex; flex-direction:column; overflow:hidden;
+      transform:translateY(24px) scale(.97);
+      transition:transform .35s cubic-bezier(.22,1,.36,1);
     }
-    .dialog-overlay.open .dialog-box {
-      transform: translateY(0) scale(1);
+    .overlay.open .dialog{transform:translateY(0) scale(1);}
+
+    /* Ornate corners */
+    .dialog::before,.dialog::after,.c-br,.c-bl{
+      position:absolute; width:50px; height:50px;
+      border-color:var(--gold); border-style:solid; opacity:.5; pointer-events:none;
+    }
+    .dialog::before{content:'';top:7px;left:7px;border-width:2px 0 0 2px;}
+    .dialog::after{content:'';top:7px;right:7px;border-width:2px 2px 0 0;}
+    .c-br{bottom:7px;right:7px;border-width:0 2px 2px 0;}
+    .c-bl{bottom:7px;left:7px;border-width:0 0 2px 2px;}
+
+    .dlg-head {
+      padding:1.3rem 1.8rem 1rem;
+      background:linear-gradient(to bottom, var(--bg2), #FFFCF4);
+      border-bottom:1px solid var(--border-light);
+      display:flex; align-items:flex-start; gap:.9rem; flex-shrink:0;
+    }
+    .dlg-avatar {
+      width:46px; height:46px; border-radius:50%; flex-shrink:0;
+      background:linear-gradient(135deg, var(--saffron), var(--crimson));
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.4rem; box-shadow:0 2px 14px rgba(200,80,10,.3);
+    }
+    .dlg-meta{flex:1;}
+    .dlg-speaker{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:var(--saffron);margin-bottom:.2rem;}
+    .dlg-q{font-style:italic;color:var(--text-mid);font-size:.92rem;line-height:1.4;}
+
+    .dlg-close{
+      background:none;border:none;color:var(--text-dim);
+      font-size:1.3rem;cursor:pointer;padding:.1rem .3rem;
+      transition:color .2s;flex-shrink:0;align-self:flex-start;
+    }
+    .dlg-close:hover{color:var(--crimson);}
+
+    .dlg-body{overflow-y:auto;padding:1.8rem;flex:1;scrollbar-width:thin;scrollbar-color:var(--border-light) transparent;}
+
+    .verse-label{
+      font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.2em;
+      text-transform:uppercase;color:var(--gold);margin-bottom:1.1rem;
+      display:flex;align-items:center;gap:.5rem;
+    }
+    .verse-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border-light),transparent);}
+
+    .dlg-text{font-size:1.1rem;line-height:1.85;color:var(--text);}
+    .dlg-text p{margin-bottom:1em;} .dlg-text p:last-child{margin-bottom:0;}
+    .dlg-text strong{color:var(--crimson);font-weight:600;}
+    .dlg-text em{color:var(--text-mid);}
+
+    .dlg-foot{
+      padding:.9rem 1.8rem 1.1rem;
+      background:linear-gradient(to top, var(--bg2), #FFFCF4);
+      border-top:1px solid var(--border-light);
+      display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+    }
+    .dlg-badge{font-size:.73rem;color:var(--text-dim);font-family:'Cinzel',serif;letter-spacing:.1em;}
+    .btn-again{
+      font-family:'Cinzel',serif;font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;
+      padding:.45rem 1.3rem;background:none;border:1px solid var(--border);
+      border-radius:2px;color:var(--text-mid);cursor:pointer;transition:all .2s;
+    }
+    .btn-again:hover{border-color:var(--saffron);color:var(--saffron);}
+
+    footer{
+      margin-top:3.5rem;text-align:center;
+      font-family:'Cinzel',serif;font-size:.75rem;color:var(--text-dim);letter-spacing:.1em;
     }
 
-    /* ornate corners */
-    .dialog-box::before,
-    .dialog-box::after,
-    .dialog-corner-br,
-    .dialog-corner-tl {
-      position: absolute;
-      width: 56px; height: 56px;
-      border-color: var(--gold);
-      border-style: solid;
-      opacity: 0.45;
-      pointer-events: none;
-    }
-    .dialog-box::before { content:''; top: 6px; left: 6px; border-width: 2px 0 0 2px; }
-    .dialog-box::after  { content:''; top: 6px; right: 6px; border-width: 2px 2px 0 0; }
-    .dialog-corner-br { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; }
-    .dialog-corner-tl { bottom: 6px; left: 6px; border-width: 0 0 2px 2px; }
-
-    .dialog-head {
-      padding: 1.4rem 2rem 1.1rem;
-      border-bottom: 1px solid var(--border-ornate);
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      flex-shrink: 0;
-    }
-    .dialog-avatar {
-      width: 48px; height: 48px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--saffron), var(--crimson));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem;
-      flex-shrink: 0;
-      box-shadow: 0 0 18px rgba(232,96,10,0.4);
-    }
-    .dialog-head-text { flex: 1; }
-    .dialog-speaker {
-      font-family: 'Cinzel', serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.25rem;
-    }
-    .dialog-question-preview {
-      font-style: italic;
-      color: var(--text-dim);
-      font-size: 0.92rem;
-      line-height: 1.45;
-    }
-
-    .dialog-close {
-      background: none;
-      border: none;
-      color: var(--text-dim);
-      font-size: 1.4rem;
-      cursor: pointer;
-      padding: 0.2rem 0.4rem;
-      border-radius: 2px;
-      transition: color 0.2s;
-      flex-shrink: 0;
-      align-self: flex-start;
-    }
-    .dialog-close:hover { color: var(--scroll-cream); }
-
-    .dialog-body {
-      overflow-y: auto;
-      padding: 2rem;
-      flex: 1;
-      scrollbar-width: thin;
-      scrollbar-color: var(--border-ornate) transparent;
-    }
-
-    .response-verse-label {
-      font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-    .response-verse-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, var(--border-ornate), transparent);
-    }
-
-    .response-text {
-      font-size: 1.1rem;
-      line-height: 1.82;
-      color: var(--scroll-cream);
-    }
-    .response-text p { margin-bottom: 1.1em; }
-    .response-text p:last-child { margin-bottom: 0; }
-    .response-text strong { color: var(--gold-light); font-weight: 500; }
-    .response-text em { color: var(--scroll-tan); }
-
-    .dialog-footer {
-      padding: 1rem 2rem 1.2rem;
-      border-top: 1px solid var(--border-ornate);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-    }
-    .dialog-footer-badge {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      font-family: 'Cinzel', serif;
-      letter-spacing: 0.1em;
-    }
-    .btn-ask-another {
-      font-family: 'Cinzel', serif;
-      font-size: 0.78rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      padding: 0.5rem 1.4rem;
-      background: none;
-      border: 1px solid var(--border-ornate);
-      border-radius: 2px;
-      color: var(--scroll-tan);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-ask-another:hover {
-      border-color: var(--gold);
-      color: var(--gold-light);
-    }
-
-    /* ── ERROR STATE ────────────────────────────────────────── */
-    .error-box {
-      background: rgba(139,26,26,0.15);
-      border: 1px solid rgba(139,26,26,0.4);
-      border-radius: 3px;
-      padding: 1rem 1.2rem;
-      color: #E8847A;
-      font-size: 0.95rem;
-      line-height: 1.5;
-      display: none;
-      margin-top: 1rem;
-    }
-    .error-box.visible { display: block; }
-
-    /* ── FOOTER ─────────────────────────────────────────────── */
-    footer {
-      margin-top: 4rem;
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--text-dim);
-      font-family: 'Cinzel', serif;
-      letter-spacing: 0.12em;
-    }
-
-    /* ── SCROLLBAR STYLING ──────────────────────────────────── */
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border-ornate); border-radius: 10px; }
-
-    /* ── MOBILE ─────────────────────────────────────────────── */
-    @media (max-width: 600px) {
-      .panel-body, .dialog-body, .dialog-head { padding: 1.2rem; }
-      .panel-header { padding: 1rem 1.2rem 0.8rem; }
-      .dialog-footer { padding: 0.8rem 1.2rem; }
-      h1 { font-size: 1.8rem; }
+    @media(max-width:580px){
+      .card-body,.dlg-body,.dlg-head,.dlg-foot{padding:1.1rem;}
+      .card-head{padding:.9rem 1.1rem .7rem;}
     }
   </style>
 </head>
 <body>
 
-<!-- Floating particles -->
-<div class="particle-field" id="particles"></div>
+<div class="particles" id="particles"></div>
 
-<div class="page-wrap">
-
-  <!-- ── HEADER ── -->
+<div class="wrap">
   <header>
-    <div class="diya-row">
-      <span class="diya">🪔</span>
-      <span class="diya">🪔</span>
-      <span class="diya">🪔</span>
-      <span class="diya">🪔</span>
-      <span class="diya">🪔</span>
+    <div class="diyas">
+      <span class="diya">🪔</span><span class="diya">🪔</span><span class="diya">🪔</span>
+      <span class="diya">🪔</span><span class="diya">🪔</span>
     </div>
-    <span class="om-symbol">ॐ</span>
+    <span class="om">ॐ</span>
     <h1>Ramayana Oracle</h1>
-    <p class="subtitle">Ask the Sage — Wisdom of Valmiki</p>
-    <div class="divider-ornate"></div>
+    <p class="subtitle">Wisdom of Valmiki</p>
+    <div class="divider"></div>
 
-    <div class="kanda-pills">
-      <span class="kanda-pill" onclick="insertKanda('Bala Kanda')">📖 Bala Kanda</span>
-      <span class="kanda-pill" onclick="insertKanda('Ayodhya Kanda')">🏛️ Ayodhya Kanda</span>
-      <span class="kanda-pill" onclick="insertKanda('Aranya Kanda')">🌿 Aranya Kanda</span>
-      <span class="kanda-pill" onclick="insertKanda('Kishkindha Kanda')">🐒 Kishkindha Kanda</span>
-      <span class="kanda-pill" onclick="insertKanda('Sundara Kanda')">🌊 Sundara Kanda</span>
-      <span class="kanda-pill" onclick="insertKanda('Yuddha Kanda')">⚔️ Yuddha Kanda</span>
+    <div class="kandas">
+      <span class="kanda" onclick="addKanda('Bala Kanda')">📖 Bala Kanda</span>
+      <span class="kanda" onclick="addKanda('Ayodhya Kanda')">🏛️ Ayodhya Kanda</span>
+      <span class="kanda" onclick="addKanda('Aranya Kanda')">🌿 Aranya Kanda</span>
+      <span class="kanda" onclick="addKanda('Kishkindha Kanda')">🐒 Kishkindha Kanda</span>
+      <span class="kanda" onclick="addKanda('Sundara Kanda')">🌊 Sundara Kanda</span>
+      <span class="kanda" onclick="addKanda('Yuddha Kanda')">⚔️ Yuddha Kanda</span>
     </div>
   </header>
 
-  <!-- ── ORACLE PANEL ── -->
-  <div class="oracle-panel">
-    <div class="panel-header">
-      <span class="panel-header-icon">🏹</span>
-      <span class="panel-title">Pose your question to the Oracle</span>
+  <div class="card">
+    <div class="card-head">
+      <span class="card-head-icon">🏹</span>
+      <span class="card-head-title">Ask the Oracle</span>
     </div>
-    <div class="panel-body">
-      <textarea
-        id="question"
-        placeholder="Ask about Lord Rama, Sita Mata, Hanuman ji, the events of Lanka, dharma, or any chapter of the Ramayana…"
+    <div class="card-body">
+
+      <textarea id="question"
+        placeholder="Ask about Lord Rama, Sita Mata, Hanuman ji, Ravana, dharma, or any event from the Ramayana… (Ctrl+Enter to send)"
         rows="4"
       ></textarea>
 
       <div class="ask-row">
-        <button class="btn-ask" id="askBtn" onclick="askOracle()">
-          🏹 &nbsp;Seek the Oracle
-        </button>
-        <div class="loading-indicator" id="loader">
-          <div class="dot-wave">
-            <span></span><span></span><span></span>
-          </div>
+        <button class="btn-ask" id="askBtn" onclick="ask()">🏹 &nbsp;Seek the Oracle</button>
+        <div class="loader" id="loader">
+          <div class="dots"><span></span><span></span><span></span></div>
           <span>Consulting the sage…</span>
         </div>
       </div>
 
-      <div class="error-box" id="errorBox"></div>
+      <div class="error" id="err"></div>
 
-      <!-- Suggested questions -->
       <div class="suggestions">
-        <button class="suggestion-btn" onclick="fillQ('Who is Hanuman and why did he leap to Lanka?')">Who is Hanuman and why did he leap to Lanka?</button>
-        <button class="suggestion-btn" onclick="fillQ('What is the significance of Rama\'s exile for 14 years?')">What is the significance of Rama's exile for 14 years?</button>
-        <button class="suggestion-btn" onclick="fillQ('How did Ravana abduct Sita?')">How did Ravana abduct Sita?</button>
-        <button class="suggestion-btn" onclick="fillQ('What virtues does Lord Rama embody?')">What virtues does Lord Rama embody?</button>
-        <button class="suggestion-btn" onclick="fillQ('Tell me about the golden deer and Maricha\'s role.')">Tell me about the golden deer and Maricha's role.</button>
-        <button class="suggestion-btn" onclick="fillQ('What happened during the battle between Rama and Ravana?')">What happened during the battle between Rama and Ravana?</button>
+        <button class="sug" onclick="fill('Who is Hanuman and why did he leap to Lanka?')">Who is Hanuman and why did he leap to Lanka?</button>
+        <button class="sug" onclick="fill('What is the significance of Rama\'s 14-year exile?')">What is the significance of Rama's 14-year exile?</button>
+        <button class="sug" onclick="fill('How did Ravana abduct Sita Mata?')">How did Ravana abduct Sita Mata?</button>
+        <button class="sug" onclick="fill('What virtues does Lord Rama embody?')">What virtues does Lord Rama embody?</button>
+        <button class="sug" onclick="fill('Tell me about Maricha and the golden deer.')">Tell me about Maricha and the golden deer.</button>
+        <button class="sug" onclick="fill('How did the battle between Rama and Ravana end?')">How did the battle between Rama and Ravana end?</button>
       </div>
-    </div>
-  </div>
-
-  <!-- ── WEBHOOK CONFIG ── -->
-  <div class="config-panel">
-    <button class="config-toggle" onclick="toggleConfig()">
-      <span>⚙️ &nbsp;Webhook / n8n Configuration</span>
-      <span id="configArrow">▼</span>
-    </button>
-    <div class="config-body" id="configBody">
-      <label for="webhookUrl">webhook / m8n configuration</label>
-      <input
-        type="text"
-        id="webhookUrl"
-        placeholder="https://your-n8n-instance.com/webhook/ramayana-oracle"
-        value="https://bhartiamit0703june23.app.n8n.cloud/webhook/ramayana-oracle"
-      />
-      <p style="margin-top:0.7rem; font-size:0.8rem; color:var(--text-dim);">
-        Leave blank to call the Groq API directly from this page. When set, all questions route through your n8n workflow.
-      </p>
     </div>
   </div>
 
   <footer>
-    <p>🪷 &nbsp; Powered by Groq AI &nbsp;·&nbsp; Inspired by Valmiki's Ramayana &nbsp; 🪷</p>
-    <p style="margin-top:0.4rem; opacity:0.5;">जय श्री राम</p>
+    <p>🪷 &nbsp; Powered by Groq AI via n8n &nbsp;·&nbsp; Inspired by Valmiki's Ramayana</p>
+    <p style="margin-top:.4rem;opacity:.5;">जय श्री राम</p>
   </footer>
+</div>
 
-</div><!-- end page-wrap -->
-
-
-<!-- ── DIALOG BOX ── -->
-<div class="dialog-overlay" id="dialogOverlay" onclick="closeDialogOnOverlay(event)">
-  <div class="dialog-box" id="dialogBox">
-    <div class="dialog-corner-br"></div>
-    <div class="dialog-corner-tl"></div>
-
-    <div class="dialog-head">
-      <div class="dialog-avatar">🔱</div>
-      <div class="dialog-head-text">
-        <div class="dialog-speaker">Oracle of Valmiki</div>
-        <div class="dialog-question-preview" id="dialogQuestion"></div>
+<!-- DIALOG -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="dialog" id="dialog">
+    <div class="c-br"></div><div class="c-bl"></div>
+    <div class="dlg-head">
+      <div class="dlg-avatar">🔱</div>
+      <div class="dlg-meta">
+        <div class="dlg-speaker">Oracle of Valmiki</div>
+        <div class="dlg-q" id="dlgQ"></div>
       </div>
-      <button class="dialog-close" onclick="closeDialog()" title="Close">✕</button>
+      <button class="dlg-close" onclick="closeDialog()">✕</button>
     </div>
-
-    <div class="dialog-body">
-      <div class="response-verse-label">📜 &nbsp; The Oracle Speaks</div>
-      <div class="response-text" id="dialogResponse"></div>
+    <div class="dlg-body">
+      <div class="verse-label">📜 &nbsp; The Oracle Speaks</div>
+      <div class="dlg-text" id="dlgText"></div>
     </div>
-
-    <div class="dialog-footer">
-      <span class="dialog-footer-badge">🪷 &nbsp; Ramayana Oracle &nbsp;·&nbsp; ॐ</span>
-      <button class="btn-ask-another" onclick="closeDialog()">Ask Another ✦</button>
+    <div class="dlg-foot">
+      <span class="dlg-badge">🪷 &nbsp; Ramayana Oracle &nbsp;·&nbsp; ॐ</span>
+      <button class="btn-again" onclick="closeDialog()">Ask Another ✦</button>
     </div>
   </div>
 </div>
 
-
 <script>
-  /* ── PARTICLE FIELD ── */
-  const field = document.getElementById('particles');
-  for (let i = 0; i < 28; i++) {
+  // ── YOUR N8N WEBHOOK URL — already set, nothing else to change ──
+  const WEBHOOK_URL = "https://bhartiamit0703june23.app.n8n.cloud/webhook/ramayana-oracle";
+
+  /* Particles */
+  const pf = document.getElementById('particles');
+  for (let i = 0; i < 22; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
     p.style.left = Math.random() * 100 + '%';
-    p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
-    p.style.animationDuration = (8 + Math.random() * 14) + 's';
-    p.style.animationDelay = (Math.random() * 12) + 's';
-    const colors = ['#F0C040','#E8600A','#C0557A','#C9900C'];
-    p.style.background = colors[Math.floor(Math.random() * colors.length)];
-    field.appendChild(p);
+    const sz = (3 + Math.random() * 4) + 'px';
+    p.style.width = p.style.height = sz;
+    p.style.animationDuration = (10 + Math.random() * 14) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.background = ['#D4900E','#C8500A','#A87008','#8B1A1A'][Math.floor(Math.random()*4)];
+    pf.appendChild(p);
   }
 
-  /* ── HELPERS ── */
-  function fillQ(text) {
-    document.getElementById('question').value = text;
-    document.getElementById('question').focus();
-  }
+  function fill(t) { document.getElementById('question').value = t; }
 
-  function insertKanda(kanda) {
+  function addKanda(k) {
     const q = document.getElementById('question');
-    const val = q.value.trim();
-    if (!val) {
-      q.value = 'Tell me about the ' + kanda + '.';
-    } else {
-      q.value = val + ' (from the ' + kanda + ')';
-    }
-    q.focus();
+    q.value = q.value.trim()
+      ? q.value.trim() + ' (from ' + k + ')'
+      : 'Tell me about the ' + k + '.';
   }
 
-  function toggleConfig() {
-    const body = document.getElementById('configBody');
-    const arrow = document.getElementById('configArrow');
-    body.classList.toggle('open');
-    arrow.textContent = body.classList.contains('open') ? '▲' : '▼';
-  }
-
-  /* ── DIALOG CONTROL ── */
-  function openDialog(question, responseHtml) {
-    document.getElementById('dialogQuestion').textContent = '"' + question + '"';
-    document.getElementById('dialogResponse').innerHTML = responseHtml;
-    document.getElementById('dialogOverlay').classList.add('open');
+  function openDialog(question, html) {
+    document.getElementById('dlgQ').textContent = '"' + question + '"';
+    document.getElementById('dlgText').innerHTML = html;
+    document.getElementById('overlay').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
-
   function closeDialog() {
-    document.getElementById('dialogOverlay').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
     document.body.style.overflow = '';
   }
+  function overlayClick(e) { if (e.target === document.getElementById('overlay')) closeDialog(); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDialog(); });
 
-  function closeDialogOnOverlay(e) {
-    if (e.target === document.getElementById('dialogOverlay')) closeDialog();
+  function fmt(txt) {
+    return txt.trim().split(/\n\n+/).map(p =>
+      '<p>' + p
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/\n/g, '<br>') + '</p>'
+    ).join('');
   }
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeDialog();
-  });
+  async function ask() {
+    const q   = document.getElementById('question').value.trim();
+    const err = document.getElementById('err');
+    err.classList.remove('on');
+    if (!q) { document.getElementById('question').focus(); return; }
 
-  /* ── FORMAT RESPONSE ── */
-  function formatResponse(text) {
-    const paragraphs = text.trim().split(/\n\n+/);
-    return paragraphs.map(p => {
-      // Bold **text**
-      p = p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      // Italic *text*
-      p = p.replace(/\*(.*?)\*/g, '<em>$1</em>');
-      return '<p>' + p.replace(/\n/g, '<br>') + '</p>';
-    }).join('');
-  }
-
-  /* ── MAIN ASK FUNCTION ── */
-  async function askOracle() {
-    const question = document.getElementById('question').value.trim();
-    if (!question) {
-      document.getElementById('question').focus();
-      return;
-    }
-
-    const askBtn = document.getElementById('askBtn');
-    const loader  = document.getElementById('loader');
-    const errorBox = document.getElementById('errorBox');
-
-    askBtn.disabled = true;
-    loader.classList.add('visible');
-    errorBox.classList.remove('visible');
-
-    const webhookUrl = document.getElementById('webhookUrl').value.trim();
+    document.getElementById('askBtn').disabled = true;
+    document.getElementById('loader').classList.add('on');
 
     try {
-      let responseText = '';
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: q })
+      });
 
-      if (webhookUrl) {
-        /* ── ROUTE VIA n8n WEBHOOK ── */
-        const res = await fetch(webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question })
-        });
-        if (!res.ok) throw new Error('n8n webhook returned ' + res.status);
-        const data = await res.json();
-        // Accept { answer } or { response } or { message } or raw string
-        responseText = data.answer || data.response || data.message || data.text
-          || (typeof data === 'string' ? data : JSON.stringify(data));
+      // Read response as text first — handles empty or non-JSON responses gracefully
+      const raw = await res.text();
 
-      } else {
-        /* ── DIRECT GROQ API CALL ── */
-        // NOTE: For production, call via your n8n webhook (set above) to keep your API key secure.
-        const GROQ_API_KEY = 'YOUR_GROQ_API_KEY_HERE'; // Replace or use n8n
-        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + GROQ_API_KEY
-          },
-          body: JSON.stringify({
-            model: 'llama3-70b-8192',
-            temperature: 0.75,
-            max_tokens: 800,
-            messages: [
-              {
-                role: 'system',
-                content: `You are Valmiki, the sage-poet who authored the Ramayana. Answer every question with deep spiritual wisdom, poetic flourish, and encyclopedic knowledge of the Ramayana's seven kandas — Bala, Ayodhya, Aranya, Kishkindha, Sundara, Yuddha, and Uttara. Reference specific characters (Rama, Sita, Lakshmana, Hanuman, Ravana, Bharata, Kaikeyi, Dasharatha, Sugriva, Vibhishana, etc.), events, shlokas, and their moral teachings. Use a reverent but approachable tone. Keep responses between 150-350 words. Occasionally use Sanskrit terms with brief explanations. Format your response in clear paragraphs.`
-              },
-              {
-                role: 'user',
-                content: question
-              }
-            ]
-          })
-        });
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.error?.message || 'Groq API error ' + res.status);
-        }
-        const data = await res.json();
-        responseText = data.choices?.[0]?.message?.content || 'No response received.';
+      if (!res.ok) {
+        throw new Error('Webhook error ' + res.status + (raw ? ': ' + raw.slice(0,120) : ''));
+      }
+      if (!raw || raw.trim() === '') {
+        throw new Error('The n8n workflow returned an empty response. Check the "Respond to Webhook" node in n8n.');
       }
 
-      openDialog(question, formatResponse(responseText));
+      let data;
+      try { data = JSON.parse(raw); }
+      catch(e) { throw new Error('Response was not valid JSON: ' + raw.slice(0, 120)); }
 
-    } catch (err) {
-      errorBox.textContent = '🔥 The oracle could not be reached: ' + err.message
-        + '. Please set your n8n webhook URL or a valid Groq API key.';
-      errorBox.classList.add('visible');
+      // Handle both { answer: "..." } and { output: "..." } and arrays
+      let answer = '';
+      if (Array.isArray(data)) {
+        // n8n sometimes returns an array — grab first item
+        const first = data[0] || {};
+        answer = first.answer || first.output || first.response || first.message || first.text || JSON.stringify(first);
+      } else {
+        answer = data.answer || data.output || data.response || data.message || data.text
+          || (typeof data === 'string' ? data : JSON.stringify(data));
+      }
+
+      openDialog(q, fmt(answer));
+
+    } catch (e) {
+      err.textContent = '⚠️ ' + e.message;
+      err.classList.add('on');
     } finally {
-      askBtn.disabled = false;
-      loader.classList.remove('visible');
+      document.getElementById('askBtn').disabled = false;
+      document.getElementById('loader').classList.remove('on');
     }
   }
 
-  /* ── ENTER KEY SUBMIT ── */
   document.getElementById('question').addEventListener('keydown', e => {
-    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) askOracle();
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) ask();
   });
 </script>
 </body>
