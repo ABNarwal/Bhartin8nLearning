@@ -15,55 +15,26 @@
 </form>
 
 <script>
-
 const webhook = "https://bhartiamit0703june23.app.n8n.cloud/webhook/3bc80916-6b30-451d-8edd-a8266e832f95";
 
-document.getElementById("hackathonForm").addEventListener("submit", async function(e){
-
+document.getElementById("hackathonForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const formData = new FormData(this);
+    const form = new FormData(e.target);
 
-    const obj = Object.fromEntries(formData.entries());
-
-    try{
-
-        const response = await fetch(webhook,{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body:JSON.stringify(obj)
+    try {
+        const response = await fetch(webhook, {
+            method: "POST",
+            body: form
         });
 
-        const result = await response.json();
+        const text = await response.text();
 
-        console.log(result);
+        alert(text);
 
-        if(result.success){
-
-            alert(
-`Registration Successful!
-
-Track : ${result.track}
-
-${result.message}`
-            );
-
-        }else{
-
-            alert(result.message);
-
-        }
-
-    }catch(err){
-
+    } catch (err) {
         console.error(err);
-
-        alert("Unable to connect to Hackathon Server.");
-
+        alert(err.message);
     }
-
 });
-
 </script>
