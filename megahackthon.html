@@ -1,0 +1,69 @@
+<form id="hackathonForm">
+  <input type="text" name="student_name" required placeholder="Student Name">
+
+  <input type="email" name="contact_email" required placeholder="Email">
+
+  <input type="text" name="mobile_number" maxlength="13" required placeholder="Mobile">
+
+  <input type="text" name="college" required placeholder="College">
+
+  <textarea name="raw_skills" required placeholder="Skills"></textarea>
+
+  <textarea name="hackathon_idea" required placeholder="Hackathon Idea"></textarea>
+
+  <button type="submit">Register</button>
+</form>
+
+<script>
+
+const webhook = "https://bhartiamit0703june23.app.n8n.cloud/webhook/3bc80916-6b30-451d-8edd-a8266e832f95";
+
+document.getElementById("hackathonForm").addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    const obj = Object.fromEntries(formData.entries());
+
+    try{
+
+        const response = await fetch(webhook,{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(obj)
+        });
+
+        const result = await response.json();
+
+        console.log(result);
+
+        if(result.success){
+
+            alert(
+`Registration Successful!
+
+Track : ${result.track}
+
+${result.message}`
+            );
+
+        }else{
+
+            alert(result.message);
+
+        }
+
+    }catch(err){
+
+        console.error(err);
+
+        alert("Unable to connect to Hackathon Server.");
+
+    }
+
+});
+
+</script>
