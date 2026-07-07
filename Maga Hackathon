@@ -1,0 +1,43 @@
+<form id="hackathonForm">
+  <input type="text" name="student_name" required placeholder="Student Name">
+
+  <input type="email" name="contact_email" required placeholder="Email">
+
+  <input type="text" name="mobile_number" maxlength="13" required placeholder="Mobile">
+
+  <input type="text" name="college" required placeholder="College">
+
+  <textarea name="raw_skills" required placeholder="Skills"></textarea>
+
+  <textarea name="hackathon_idea" required placeholder="Hackathon Idea"></textarea>
+
+  <button type="submit">Register</button>
+</form>
+
+<script>
+const webhook =
+"https://YOUR-N8N-DOMAIN/webhook/mega-hackathon-registration";
+
+document.getElementById("hackathonForm")
+.addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+const formData = new FormData(this);
+
+const obj = Object.fromEntries(formData.entries());
+
+const response = await fetch(webhook,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(obj)
+});
+
+const result = await response.json();
+
+alert(result.message);
+
+});
+</script>
