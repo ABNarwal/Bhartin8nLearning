@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support | NIC Kurukshetra</title>
+    <title>Support Request | NIC Kurukshetra</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,12 +21,49 @@
     </header>
 
     <main>
-        <h3 data-en="Contact Support" data-hi="संपर्क सहायता">Contact Support</h3>
-        <p data-en="If you are facing issues with registration or n8n workflow integrations, please reach out to our technical team." data-hi="यदि आपको पंजीकरण में समस्या आ रही है, तो कृपया हमारी तकनीकी टीम से संपर्क करें।">If you are facing issues with registration or n8n workflow integrations, please reach out to our technical team.</p>
-        <ul>
-            <li>Email: support.hackathon@nic.in</li>
-            <li>Phone: +91-XXXXXXXXXX</li>
-        </ul>
+        <h3 data-en="Raise a Support Request" data-hi="सहायता अनुरोध दर्ज करें">Raise a Support Request</h3>
+        <p data-en="Facing an issue at the venue or with your setup? Let us know below." data-hi="स्थान पर या अपने सेटअप में किसी समस्या का सामना कर रहे हैं? हमें नीचे बताएं।">Facing an issue at the venue or with your setup? Let us know below.</p>
+        
+        <form id="supportForm">
+            <div class="form-group">
+                <label for="support_name" data-en="Participant / Team Name" data-hi="प्रतिभागी / टीम का नाम">Participant / Team Name:</label>
+                <div class="input-with-mic">
+                    <input type="text" id="support_name" required>
+                    <button type="button" class="mic-btn" onclick="startDictation('support_name')">🎤</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="support_email" data-en="Contact Email" data-hi="ईमेल">Contact Email:</label>
+                <input type="email" id="support_email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="issue_category" data-en="Issue Category" data-hi="समस्या श्रेणी">Issue Category:</label>
+                <!-- Autocomplete Feature -->
+                <input type="text" id="issue_category" list="issue_list" placeholder="Select or type your issue" required>
+                <datalist id="issue_list">
+                    <option value="Wifi Availability"></option>
+                    <option value="Power / Extension Board Needed"></option>
+                    <option value="Parking Query"></option>
+                    <option value="Water / Refreshment Facility"></option>
+                    <option value="Laptop / Hardware Issue"></option>
+                    <option value="Software / Environment Setup"></option>
+                    <option value="Submission / n8n Workflow Error"></option>
+                </datalist>
+            </div>
+
+            <div class="form-group">
+                <label for="issue_description" data-en="Describe your issue" data-hi="अपनी समस्या का वर्णन करें">Describe your issue:</label>
+                <div class="input-with-mic">
+                    <textarea id="issue_description" rows="4" placeholder="Briefly explain what you need help with..." required></textarea>
+                    <button type="button" class="mic-btn" onclick="startDictation('issue_description')">🎤</button>
+                </div>
+            </div>
+
+            <button type="submit" id="supportSubmitBtn" data-en="Submit Request" data-hi="अनुरोध जमा करें">Submit Request</button>
+            <p id="supportMessage"></p>
+        </form>
     </main>
 
     <footer>
