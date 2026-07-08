@@ -14,6 +14,37 @@ if (langToggle) {
     });
 }
 
+// --- 5. Support Form Logic ---
+const supportForm = document.getElementById('supportForm');
+
+if (supportForm) {
+    supportForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Capture data
+        const supportData = {
+            name: document.getElementById('support_name').value.trim(),
+            email: document.getElementById('support_email').value.trim(),
+            category: document.getElementById('issue_category').value.trim(),
+            description: document.getElementById('issue_description').value.trim()
+        };
+
+        const btn = document.getElementById('supportSubmitBtn');
+        const msg = document.getElementById('supportMessage');
+
+        btn.textContent = "Sending...";
+        btn.disabled = true;
+
+        // Simulate sending to webhook/server
+        setTimeout(() => {
+            msg.textContent = "Support request submitted successfully. Our team will assist you shortly.";
+            msg.style.color = "green";
+            btn.textContent = "Request Sent";
+            supportForm.reset();
+        }, 1000);
+    });
+}
+
 // --- 3. Speech-to-Text (Mic Facility) ---
 function startDictation(elementId) {
     if (window.hasOwnProperty('webkitSpeechRecognition') || window.hasOwnProperty('SpeechRecognition')) {
