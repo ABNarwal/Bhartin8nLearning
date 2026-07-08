@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackathon Registration | NIC Kurukshetra</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1 data-en="NIC Kurukshetra" data-hi="एनआईसी कुरुक्षेत्र">NIC Kurukshetra</h1>
+            <button id="langToggle">हिंदी / English</button>
+        </div>
+        <h2 data-en="Event: Hackathon | Date: 16 July, 2026" data-hi="इवेंट: हैकाथॉन | दिनांक: 16 जुलाई, 2026">Event: Hackathon | Date: 16 July, 2026</h2>
+        <p class="alert" data-en="Registration is open up to 15th July 5 PM. Only one entry allowed per user." data-hi="पंजीकरण 15 जुलाई शाम 5 बजे तक खुला है। केवल एक प्रविष्टि की अनुमति है।">Registration is open up to 15th July 5 PM. Only one entry allowed per user.</p>
+        <nav>
+            <a href="index.html" class="active" data-en="Registration" data-hi="पंजीकरण">Registration</a>
+            <a href="support.html" data-en="Support" data-hi="सहायता">Support</a>
+            <a href="faq.html" data-en="FAQ" data-hi="सामान्य प्रश्न">FAQ</a>
+        </nav>
+    </header>
+
+    <main>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="student_name" data-en="Student Name" data-hi="छात्र का नाम">Student Name:</label>
+                <input type="text" id="student_name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="contact_email" data-en="Contact Email" data-hi="ईमेल">Contact Email:</label>
+                <input type="email" id="contact_email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="mobile_number" data-en="Mobile Number" data-hi="मोबाइल नंबर">Mobile Number:</label>
+                <input type="tel" id="mobile_number" pattern="[0-9]{10,12}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="college" data-en="College" data-hi="कॉलेज">College:</label>
+                <input type="text" id="college" list="college_list" required>
+                <datalist id="college_list">
+                    <option value="NIT Kurukshetra"></option>
+                    <option value="Kurukshetra University"></option>
+                    <option value="UIET Kurukshetra"></option>
+                </datalist>
+            </div>
+
+            <div class="form-group">
+                <label for="raw_skills" data-en="Raw Skills (Comma separated)" data-hi="कौशल (अल्पविराम द्वारा अलग)">Raw Skills (Comma separated):</label>
+                <div class="input-with-mic">
+                    <input type="text" id="raw_skills" placeholder="e.g., python, embedding models, react basics" required>
+                    <button type="button" class="mic-btn" onclick="startDictation('raw_skills')">🎤</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="hackathon_idea" data-en="Hackathon Idea" data-hi="हैकाथॉन विचार">Hackathon Idea:</label>
+                <div class="input-with-mic">
+                    <textarea id="hackathon_idea" rows="3" required></textarea>
+                    <button type="button" class="mic-btn" onclick="startDictation('hackathon_idea')">🎤</button>
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn" data-en="Submit Registration" data-hi="जमा करें">Submit Registration</button>
+            <p id="formMessage"></p>
+        </form>
+    </main>
+
+    <footer>
+        <p>Last Update: <span id="lastUpdate"></span></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
