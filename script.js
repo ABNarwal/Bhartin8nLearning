@@ -172,4 +172,35 @@ if (form) {
             }
 
         } catch (error) {
-            console.error("Webhook Error:", error)}}}
+            console.error("Webhook Error:", error);
+            formMessage.textContent = "Error connecting to server. Please try again.";
+            formMessage.style.color = "red";
+            
+            // Re-enable the button so they can try again
+            submitBtn.textContent = "Submit Registration";
+            submitBtn.disabled = false;
+        }
+    });
+}
+
+// --- 5. Support Form Logic (support.html) ---
+const supportForm = document.getElementById('supportForm');
+if (supportForm) {
+    supportForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const btn = document.getElementById('supportSubmitBtn');
+        const msg = document.getElementById('supportMessage');
+
+        btn.textContent = "Sending...";
+        btn.disabled = true;
+
+        // Simulate sending support ticket
+        setTimeout(() => {
+            msg.textContent = "Support request submitted successfully. Our team will assist you shortly.";
+            msg.style.color = "green";
+            btn.textContent = "Request Sent";
+            supportForm.reset();
+        }, 1000);
+    });
+}
