@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Support Request | NIC Kurukshetra</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -24,60 +25,67 @@
         <h3 data-en="Raise a Support Request" data-hi="सहायता अनुरोध दर्ज करें">Raise a Support Request</h3>
         <p data-en="Facing an issue at the venue or with your setup? Let us know below." data-hi="स्थान पर या अपने सेटअप में किसी समस्या का सामना कर रहे हैं? हमें नीचे बताएं।">Facing an issue at the venue or with your setup? Let us know below.</p>
         
-       <form id="supportForm">
-    <div class="form-group">
-        <label for="support_name" data-en="Participant / Team Name" data-hi="प्रतिभागी / टीम का नाम">Participant / Team Name:</label>
-        <div class="input-with-mic">
-            <input type="text" id="support_name" required>
-            <button type="button" class="mic-btn" id="mic_support_name" onclick="toggleDictation('support_name', 'mic_support_name')">🎤</button>
-        </div>
-    </div>
+        <form id="supportForm">
+            <div class="form-group">
+                <label for="support_name" data-en="Participant / Team Name" data-hi="प्रतिभागी / टीम का नाम">Participant / Team Name:</label>
+                <div class="input-with-mic">
+                    <input type="text" id="support_name" required>
+                    <button type="button" class="mic-btn" id="mic_support_name" onclick="toggleDictation('support_name', 'mic_support_name')">🎤</button>
+                </div>
+            </div>
 
-    <div class="form-group">
-        <label for="support_email" data-en="Contact Email" data-hi="ईमेल">Contact Email:</label>
-        <input type="email" id="support_email" required>
-    </div>
+            <div class="form-group">
+                <label for="support_email" data-en="Contact Email" data-hi="ईमेल">Contact Email:</label>
+                <input type="email" id="support_email" required>
+            </div>
 
-    <div class="form-group">
-        <label for="issue_category" data-en="Issue Category" data-hi="समस्या श्रेणी">Issue Category:</label>
-        <input type="text" id="issue_category" list="issue_list" placeholder="Select or type your issue" required>
-        <datalist id="issue_list">
-            <option value="Wifi Availability"></option>
-            <option value="Power / Extension Board Needed"></option>
-            <option value="Parking Query"></option>
-            <option value="Water / Refreshment Facility"></option>
-            <option value="Laptop / Hardware Issue"></option>
-            <option value="Software / Environment Setup"></option>
-            <option value="Submission / n8n Workflow Error"></option>
-        </datalist>
-    </div>
+            <div class="form-group">
+                <label for="issue_category" data-en="Issue Category" data-hi="समस्या श्रेणी">Issue Category:</label>
+                <input type="text" id="issue_category" list="issue_list" placeholder="Select or type your issue" required>
+                <datalist id="issue_list">
+                    <option value="Wifi Availability"></option>
+                    <option value="Power / Extension Board Needed"></option>
+                    <option value="Parking Query"></option>
+                    <option value="Water / Refreshment Facility"></option>
+                    <option value="Laptop / Hardware Issue"></option>
+                    <option value="Software / Environment Setup"></option>
+                    <option value="Submission / n8n Workflow Error"></option>
+                </datalist>
+            </div>
 
-    <div class="form-group">
-        <label data-en="Select AI Assistant for writing help:" data-hi="लेखन सहायता के लिए AI चुनें:">Select AI Assistant for writing help:</label>
-        <div class="radio-group">
-            <input type="radio" id="ai_gpt" name="ai_model" value="ChatGPT" checked>
-            <label for="ai_gpt">ChatGPT</label>
-            
-            <input type="radio" id="ai_gemini" name="ai_model" value="Gemini">
-            <label for="ai_gemini">Gemini</label>
-            
-            <input type="radio" id="ai_groq" name="ai_model" value="Groq">
-            <label for="ai_groq">Groq</label>
-        </div>
-    </div>
+            <div class="form-group">
+                <label data-en="Select AI Assistant for writing help:" data-hi="लेखन सहायता के लिए AI चुनें:">Select AI Assistant for writing help:</label>
+                <div class="radio-group">
+                    <input type="radio" id="ai_gpt" name="ai_model" value="ChatGPT" checked>
+                    <label for="ai_gpt">ChatGPT</label>
+                    
+                    <input type="radio" id="ai_gemini" name="ai_model" value="Gemini">
+                    <label for="ai_gemini">Gemini</label>
+                    
+                    <input type="radio" id="ai_groq" name="ai_model" value="Groq">
+                    <label for="ai_groq">Groq</label>
+                </div>
+            </div>
 
-    <div class="form-group">
-        <label for="issue_description" data-en="Describe your issue" data-hi="अपनी समस्या का वर्णन करें">Describe your issue:</label>
-        <div class="input-with-mic">
-            <textarea id="issue_description" rows="4" placeholder="Briefly explain what you need help with..." required></textarea>
-            <button type="button" class="mic-btn" id="mic_issue_description" onclick="toggleDictation('issue_description', 'mic_issue_description')">🎤</button>
-        </div>
-        <button type="button" id="enhanceAiBtn" class="ai-btn">✨ Enhance with AI</button>
-    </div>
+            <div class="form-group">
+                <label for="issue_description" data-en="Rough Notes / Description" data-hi="अपनी समस्या का वर्णन करें">Rough Notes / Description:</label>
+                <div class="input-with-mic">
+                    <textarea id="issue_description" rows="3" placeholder="Jot down rough notes here..." required></textarea>
+                    <button type="button" class="mic-btn" id="mic_issue_description" onclick="toggleDictation('issue_description', 'mic_issue_description')">🎤</button>
+                </div>
+                <button type="button" id="enhanceAiBtn" class="ai-btn">✨ Enhance with AI</button>
+            </div>
 
-    <button type="submit" id="supportSubmitBtn" data-en="Submit Request" data-hi="अनुरोध जमा करें">Submit Request</button>
-    <p id="supportMessage"></p>
-</form>
+            <!-- Hidden Box for AI Output -->
+            <div class="form-group ai-review-box" id="ai_suggestion_group" style="display: none;">
+                <label for="enhanced_description">✨ AI Enhanced Version (Review & Edit):</label>
+                <textarea id="enhanced_description" rows="4"></textarea>
+                <small>You can type here to add or delete information before submitting.</small>
+            </div>
+
+            <button type="submit" id="supportSubmitBtn" data-en="Submit Request" data-hi="अनुरोध जमा करें">Submit Request</button>
+            <p id="supportMessage"></p>
+        </form>
     </main>
 
     <footer>
