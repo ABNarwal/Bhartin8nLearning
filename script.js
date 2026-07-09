@@ -90,7 +90,7 @@ window.toggleDictation = function(inputId, btnId) {
     } else {
         alert("Your browser does not support the Web Speech API. Please use Chrome or Edge.");
     }
-}
+};
 
 // --- 4. Registration Logic & n8n Integration (index.html) ---
 const form = document.getElementById('registrationForm');
