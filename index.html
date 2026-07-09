@@ -51,17 +51,17 @@
             <div class="form-group">
                 <label for="raw_skills" data-en="Raw Skills (Comma separated)" data-hi="कौशल (अल्पविराम द्वारा अलग)">Raw Skills (Comma separated):</label>
                 <div class="input-with-mic">
-                    <input type="text" id="raw_skills" placeholder="e.g., python, embedding models, react basics" required>
-                    <button type="button" class="mic-btn" onclick="startDictation('raw_skills')">🎤</button>
-                </div>
+    <input type="text" id="raw_skills" placeholder="e.g., python, embedding models, react basics" required>
+    <button type="button" class="mic-btn" id="mic_raw_skills" onclick="toggleDictation('raw_skills', 'mic_raw_skills')">🎤</button>
+</div>
             </div>
 
             <div class="form-group">
                 <label for="hackathon_idea" data-en="Hackathon Idea" data-hi="हैकाथॉन विचार">Hackathon Idea:</label>
                 <div class="input-with-mic">
-                    <textarea id="hackathon_idea" rows="3" required></textarea>
-                    <button type="button" class="mic-btn" onclick="startDictation('hackathon_idea')">🎤</button>
-                </div>
+    <textarea id="hackathon_idea" rows="3" required></textarea>
+    <button type="button" class="mic-btn" id="mic_hackathon_idea" onclick="toggleDictation('hackathon_idea', 'mic_hackathon_idea')">🎤</button>
+</div>
             </div>
 
             <button type="submit" id="submitBtn" data-en="Submit Registration" data-hi="जमा करें">Submit Registration</button>
