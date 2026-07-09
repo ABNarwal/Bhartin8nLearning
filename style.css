@@ -81,6 +81,18 @@ input[type="text"], input[type="email"], input[type="tel"], textarea {
 }
 .mic-btn:hover { background-color: #002244; }
 
+/* Active Microphone Styling */
+.mic-btn.listening {
+    background-color: #d9534f;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(217, 83, 79, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(217, 83, 79, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(217, 83, 79, 0); }
+}
+
 button[type="submit"] {
     background-color: #28a745;
     color: white;
@@ -92,7 +104,6 @@ button[type="submit"] {
     width: 100%;
 }
 button[type="submit"]:hover { background-color: #218838; }
-
 button:disabled { background-color: #cccccc; cursor: not-allowed; }
 
 .faq-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
@@ -114,18 +125,8 @@ footer {
     cursor: pointer;
     font-weight: bold;
 }
-/* --- Active Microphone Styling --- */
-.mic-btn.listening {
-    background-color: #d9534f; /* Red background for active state */
-    animation: pulse 1.5s infinite;
-}
 
-@keyframes pulse {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(217, 83, 79, 0.7); }
-    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(217, 83, 79, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(217, 83, 79, 0); }
-}
-/* --- AI Feature Styling --- */
+/* AI Feature Styling */
 .radio-group {
     display: flex;
     gap: 15px;
@@ -143,7 +144,7 @@ footer {
 }
 
 .ai-btn {
-    background-color: #6f42c1; /* Distinct Purple for AI */
+    background-color: #6f42c1;
     color: white;
     border: none;
     border-radius: 4px;
@@ -155,3 +156,24 @@ footer {
 }
 .ai-btn:hover { background-color: #5a32a3; }
 .ai-btn:disabled { background-color: #cccccc; cursor: not-allowed; }
+
+.ai-review-box {
+    background-color: #f8f5ff;
+    border: 2px solid #6f42c1;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+.ai-review-box label { color: #6f42c1; }
+.ai-review-box small {
+    display: block;
+    color: #666;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
