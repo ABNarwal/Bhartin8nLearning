@@ -210,7 +210,29 @@ if (enhanceAiBtn) {
                 const enhancedField = document.getElementById('enhanced_description');
                 
                 suggestionGroup.style.display = 'block';
-                enhancedField.value = data.enhanced_text || data.text || "AI format error. Please try again.";
+                // Log the raw data to the F12 console so we can see exactly what n8n sent if it fails again
+console.log("Raw n8n response:", data); 
+
+let finalAiText = "AI format error. Please try again.";
+
+// 1. If n8n sends our custom JSON
+if (data.enhanced_text) {
+    finalAiText = data.enhanced_text;
+} 
+// 2. If n8n sends an Array (which happens when selecting 'All Incoming Items')
+else if (Array.isArray(data) && data.length > 0) {
+    if (data[0].enhanced_text) {
+        finalAiText = data[0].enhanced_text;
+    } else if (data[0].choices && data[0].choices.length > 0) {
+        finalAiText = data[0].choices[0].message.content; // Raw Groq array
+    }
+} 
+// 3. If n8n sends a single raw Groq object
+else if (data.choices && data.choices.length > 0) {
+    finalAiText = data.choices[0].message.content;
+}
+
+enhancedField.value = finalAiText;
                 enhancedField.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
             } else {
