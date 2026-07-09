@@ -21,7 +21,6 @@ if (langToggle) {
 let activeRecognition = null;
 let activeMicButtonId = null;
 
-// Expose the function globally so the HTML onclick attributes can find it
 window.toggleDictation = function(inputId, btnId) {
     const btn = document.getElementById(btnId);
     
@@ -30,13 +29,11 @@ window.toggleDictation = function(inputId, btnId) {
         return;
     }
 
-    // If the mic is currently active on THIS specific button, stop it
     if (activeRecognition && activeMicButtonId === btnId) {
         activeRecognition.stop();
         return;
     }
 
-    // If the mic is active on a DIFFERENT button, stop that one first
     if (activeRecognition) {
         activeRecognition.stop();
     }
@@ -45,7 +42,6 @@ window.toggleDictation = function(inputId, btnId) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         activeRecognition = new SpeechRecognition();
         
-        // Use Hindi if toggled, otherwise English
         activeRecognition.lang = currentLang === 'hi' ? 'hi-IN' : 'en-IN'; 
         activeRecognition.continuous = false;
         activeRecognition.interimResults = false;
@@ -53,22 +49,20 @@ window.toggleDictation = function(inputId, btnId) {
         activeRecognition.onstart = function() {
             activeMicButtonId = btnId;
             btn.classList.add('listening');
-            btn.textContent = "🛑"; // Change icon to Stop
+            btn.textContent = "🛑"; 
         };
 
         activeRecognition.onresult = function(e) {
             const transcript = e.results[0][0].transcript;
             const inputField = document.getElementById(inputId);
             if (inputField) {
-                // Append with a space if there's already text, otherwise replace
                 inputField.value = inputField.value ? inputField.value + ' ' + transcript : transcript;
             }
         };
 
         activeRecognition.onend = function() {
-            // Reset button styling and variables when listening ends
             btn.classList.remove('listening');
-            btn.textContent = "🎤"; // Revert icon to Mic
+            btn.textContent = "🎤"; 
             activeRecognition = null;
             activeMicButtonId = null;
         };
@@ -95,7 +89,6 @@ window.toggleDictation = function(inputId, btnId) {
 // --- 4. Registration Logic & n8n Integration (index.html) ---
 const form = document.getElementById('registrationForm');
 if (form) {
-    // Check if deadline passed (July 15, 2026, 17:00:00)
     const deadline = new Date('2026-07-15T17:00:00');
     const now = new Date();
     
@@ -105,7 +98,6 @@ if (form) {
         document.getElementById('formMessage').style.color = "red";
     }
 
-    // Check if already registered in this browser
     if (localStorage.getItem('hackathon_registered') === 'true') {
         document.getElementById('submitBtn').disabled = true;
         document.getElementById('formMessage').textContent = "You have already submitted an entry.";
@@ -115,7 +107,6 @@ if (form) {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        // Data structure matching the n8n payload and Google Sheets schema exactly
         const payload = {
             "Student_name": document.getElementById('Student_name').value.trim(),
             "Email": document.getElementById('Email').value.trim().toLowerCase(),
@@ -125,8 +116,8 @@ if (form) {
             "Idea": document.getElementById('Idea').value.trim()
         };
 
-        // WARNING: Replace with your actual n8n webhook URL before deploying
-        const webhookURL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/3bc80916-6b30-451d-8edd-a8266e832f95"; 
+        // WARNING: Replace with your actual n8n webhook URL
+        const webhookURL = "https://YOUR_N8N_DOMAIN/webhook/3bc80916-6b30-451d-8edd-a8266e832f95"; 
 
         const submitBtn = document.getElementById('submitBtn');
         const formMessage = document.getElementById('formMessage');
@@ -144,7 +135,6 @@ if (form) {
             const responseData = await response.json();
 
             if (response.ok) { 
-                // Handles 200 OK responses (both SELECTED and REJECTED)
                 localStorage.setItem('hackathon_registered', 'true');
                 
                 if (responseData.status === 'SELECTED') {
@@ -162,7 +152,6 @@ if (form) {
                 form.reset();
 
             } else if (response.status === 409) {
-                // Handles your custom 409 Duplicate response
                 formMessage.textContent = responseData.message || "Student already registered with this Email or Mobile.";
                 formMessage.style.color = "red";
                 submitBtn.textContent = "Submit Registration";
@@ -175,32 +164,123 @@ if (form) {
             console.error("Webhook Error:", error);
             formMessage.textContent = "Error connecting to server. Please try again.";
             formMessage.style.color = "red";
-            
-            // Re-enable the button so they can try again
             submitBtn.textContent = "Submit Registration";
             submitBtn.disabled = false;
         }
     });
 }
 
-// --- 5. Support Form Logic (support.html) ---
+// --- 5. Support Form & AI Enhancement Logic (support.html) ---
+
+// A. "Enhance with AI" Button Logic
+const enhanceAiBtn = document.getElementById('enhanceAiBtn');
+if (enhanceAiBtn) {
+    enhanceAiBtn.addEventListener('click', async function() {
+        const descField = document.getElementById('issue_description');
+        const rawText = descField.value.trim();
+        
+        if (!rawText) {
+            alert("Please jot down some rough notes first before enhancing!");
+            return;
+        }
+
+        const selectedAI = document.querySelector('input[name="ai_model"]:checked').value;
+        const originalBtnText = enhanceAiBtn.textContent;
+
+        enhanceAiBtn.textContent = `✨ Enhancing with ${selectedAI}...`;
+        enhanceAiBtn.disabled = true;
+
+        try {
+            // WARNING: Replace with your actual AI Enhancement Webhook URL
+            const aiWebhookURL = "https://YOUR_N8N_DOMAIN/webhook/enhance-support-text";
+            
+            const response = await fetch(aiWebhookURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    raw_text: rawText, 
+                    ai_model: selectedAI 
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                
+                const suggestionGroup = document.getElementById('ai_suggestion_group');
+                const enhancedField = document.getElementById('enhanced_description');
+                
+                suggestionGroup.style.display = 'block';
+                enhancedField.value = data.enhanced_text || data.text || "AI format error. Please try again.";
+                enhancedField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            } else {
+                throw new Error("Server error");
+            }
+        } catch (error) {
+            console.error("AI Enhance Error:", error);
+            alert("Failed to connect to AI webhook. Check console.");
+        } finally {
+            enhanceAiBtn.textContent = originalBtnText;
+            enhanceAiBtn.disabled = false;
+        }
+    });
+}
+
+// B. Final Support Ticket Submission Logic
 const supportForm = document.getElementById('supportForm');
 if (supportForm) {
-    supportForm.addEventListener('submit', function(e) {
+    supportForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
         const btn = document.getElementById('supportSubmitBtn');
         const msg = document.getElementById('supportMessage');
 
-        btn.textContent = "Sending...";
+        const suggestionGroup = document.getElementById('ai_suggestion_group');
+        const enhancedField = document.getElementById('enhanced_description');
+        let finalDescription = document.getElementById('issue_description').value.trim();
+
+        if (suggestionGroup.style.display !== 'none' && enhancedField.value.trim() !== "") {
+            finalDescription = enhancedField.value.trim();
+        }
+
+        const supportPayload = {
+            name: document.getElementById('support_name').value.trim(),
+            email: document.getElementById('support_email').value.trim(),
+            category: document.getElementById('issue_category').value.trim(),
+            description: finalDescription,
+            ai_used: document.querySelector('input[name="ai_model"]:checked').value
+        };
+
+        btn.textContent = "Sending Request...";
         btn.disabled = true;
 
-        // Simulate sending support ticket
-        setTimeout(() => {
-            msg.textContent = "Support request submitted successfully. Our team will assist you shortly.";
-            msg.style.color = "green";
-            btn.textContent = "Request Sent";
-            supportForm.reset();
-        }, 1000);
+        try {
+            // WARNING: Replace with your Final Support Ticket Webhook URL
+            const supportWebhookURL = "https://YOUR_N8N_DOMAIN/webhook/submit-support-ticket";
+            
+            const response = await fetch(supportWebhookURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(supportPayload)
+            });
+
+            if (response.ok) {
+                msg.textContent = "Support request submitted successfully.";
+                msg.style.color = "green";
+                btn.textContent = "Request Sent";
+                
+                supportForm.reset();
+                suggestionGroup.style.display = 'none';
+            } else {
+                throw new Error("Server error");
+            }
+        } catch (error) {
+            console.error("Support Submission Error:", error);
+            msg.textContent = "Error submitting request. Please try again.";
+            msg.style.color = "red";
+            
+            btn.textContent = "Submit Request";
+            btn.disabled = false;
+        }
     });
 }
