@@ -117,7 +117,7 @@ if (form) {
         };
 
         // WARNING: Replace with your actual n8n webhook URL
-        const webhookURL = "https://YOUR_N8N_DOMAIN/webhook/3bc80916-6b30-451d-8edd-a8266e832f95"; 
+        const webhookURL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/3bc80916-6b30-451d-8edd-a8266e832f95"; 
 
         const submitBtn = document.getElementById('submitBtn');
         const formMessage = document.getElementById('formMessage');
@@ -189,10 +189,10 @@ if (enhanceAiBtn) {
 
         enhanceAiBtn.textContent = `✨ Enhancing with ${selectedAI}...`;
         enhanceAiBtn.disabled = true;
-
+      const aiWebhookURL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/enhance-support-text";
         try {
             // WARNING: Replace with your actual AI Enhancement Webhook URL
-            const aiWebhookURL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/enhance-support-text";
+           // const aiWebhookURL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/enhance-support-text";
             
             const response = await fetch(aiWebhookURL, {
                 method: 'POST',
