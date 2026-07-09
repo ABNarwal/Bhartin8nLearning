@@ -189,10 +189,10 @@ if (enhanceAiBtn) {
 
         enhanceAiBtn.textContent = `✨ Enhancing with ${selectedAI}...`;
         enhanceAiBtn.disabled = true;
-      const aiWebhookURL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/enhance-support-text";
+     
         try {
             // WARNING: Replace with your actual AI Enhancement Webhook URL
-           // const aiWebhookURL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/enhance-support-text";
+           const aiWebhookURL = "https://bhartiamit0703july07.app.n8n.cloud/webhook-test/enhance-support-text";
             
             const response = await fetch(aiWebhookURL, {
                 method: 'POST',
