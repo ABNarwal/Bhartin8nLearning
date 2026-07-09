@@ -192,7 +192,7 @@ if (enhanceAiBtn) {
 
         try {
             // WARNING: Replace with your actual AI Enhancement Webhook URL
-            const aiWebhookURL = "https://YOUR_N8N_DOMAIN/webhook/enhance-support-text";
+            const aiWebhookURL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/enhance-support-text";
             
             const response = await fetch(aiWebhookURL, {
                 method: 'POST',
@@ -256,7 +256,7 @@ if (supportForm) {
 
         try {
             // WARNING: Replace with your Final Support Ticket Webhook URL
-            const supportWebhookURL = "https://YOUR_N8N_DOMAIN/webhook/submit-support-ticket";
+            const supportWebhookURL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/ba0249f3-9d8f-456c-b646-37ab5f24e72d";
             
             const response = await fetch(supportWebhookURL, {
                 method: 'POST',
