@@ -45,36 +45,64 @@ if (supportForm) {
     });
 }
 
-// --- 3. Speech-to-Text (Mic Facility) ---
-function startDictation(elementId) {
+// --- 3. Speech-to-Text (Toggle Mic Facility) ---
+let activeRecognition = null;
+let activeMicButtonId = null;
+
+function toggleDictation(inputId, btnId) {
+    const btn = document.getElementById(btnId);
+
+    // If the mic is currently active on THIS specific button, stop it
+    if (activeRecognition && activeMicButtonId === btnId) {
+        activeRecognition.stop();
+        return;
+    }
+
+    // If the mic is active on a DIFFERENT button, stop that one first
+    if (activeRecognition) {
+        activeRecognition.stop();
+    }
+
     if (window.hasOwnProperty('webkitSpeechRecognition') || window.hasOwnProperty('SpeechRecognition')) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
+        activeRecognition = new SpeechRecognition();
         
         // Use Hindi if toggled, otherwise English
-        recognition.lang = currentLang === 'hi' ? 'hi-IN' : 'en-IN'; 
-        recognition.continuous = false;
-        recognition.interimResults = false;
+        activeRecognition.lang = currentLang === 'hi' ? 'hi-IN' : 'en-IN'; 
+        activeRecognition.continuous = false;
+        activeRecognition.interimResults = false;
 
-        recognition.start();
+        activeRecognition.onstart = function() {
+            activeMicButtonId = btnId;
+            btn.classList.add('listening');
+            btn.textContent = "🛑"; // Change icon to Stop
+        };
 
-        recognition.onresult = function(e) {
+        activeRecognition.onresult = function(e) {
             const transcript = e.results[0][0].transcript;
-            const inputField = document.getElementById(elementId);
+            const inputField = document.getElementById(inputId);
             // Append with a space if there's already text, otherwise replace
             inputField.value = inputField.value ? inputField.value + ' ' + transcript : transcript;
-            recognition.stop();
         };
 
-        recognition.onerror = function(e) {
-            alert('Speech recognition failed: ' + e.error);
-            recognition.stop();
+        activeRecognition.onend = function() {
+            // Reset button styling and variables when listening ends
+            btn.classList.remove('listening');
+            btn.textContent = "🎤"; // Revert icon to Mic
+            activeRecognition = null;
+            activeMicButtonId = null;
         };
+
+        activeRecognition.onerror = function(e) {
+            alert('Speech recognition stopped: ' + e.error);
+            activeRecognition.stop();
+        };
+
+        activeRecognition.start();
     } else {
         alert("Your browser does not support the Web Speech API. Please use Chrome or Edge.");
     }
 }
-
 // --- 4. Registration Logic & n8n Integration ---
 const form = document.getElementById('registrationForm');
 if (form) {
