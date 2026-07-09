@@ -1,5 +1,8 @@
 // --- 1. Last Update Feature ---
-document.getElementById('lastUpdate').textContent = document.lastModified;
+const updateSpan = document.getElementById('lastUpdate');
+if (updateSpan) {
+    updateSpan.textContent = document.lastModified;
+}
 
 // --- 2. Bilingual Support System (English/Hindi) ---
 let currentLang = 'en';
@@ -14,43 +17,19 @@ if (langToggle) {
     });
 }
 
-// --- 5. Support Form Logic ---
-const supportForm = document.getElementById('supportForm');
-
-if (supportForm) {
-    supportForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        // Capture data
-        const supportData = {
-            name: document.getElementById('support_name').value.trim(),
-            email: document.getElementById('support_email').value.trim(),
-            category: document.getElementById('issue_category').value.trim(),
-            description: document.getElementById('issue_description').value.trim()
-        };
-
-        const btn = document.getElementById('supportSubmitBtn');
-        const msg = document.getElementById('supportMessage');
-
-        btn.textContent = "Sending...";
-        btn.disabled = true;
-
-        // Simulate sending to webhook/server
-        setTimeout(() => {
-            msg.textContent = "Support request submitted successfully. Our team will assist you shortly.";
-            msg.style.color = "green";
-            btn.textContent = "Request Sent";
-            supportForm.reset();
-        }, 1000);
-    });
-}
-
 // --- 3. Speech-to-Text (Toggle Mic Facility) ---
 let activeRecognition = null;
 let activeMicButtonId = null;
 
-function toggleDictation(inputId, btnId) {
+// Expose the function globally so the HTML onclick attributes can find it
+window.toggleDictation = function(inputId, btnId) {
     const btn = document.getElementById(btnId);
+    
+    // Safety check: if the button doesn't exist, stop.
+    if (!btn) {
+        console.error("Mic button not found:", btnId);
+        return;
+    }
 
     // If the mic is currently active on THIS specific button, stop it
     if (activeRecognition && activeMicButtonId === btnId) {
@@ -81,8 +60,10 @@ function toggleDictation(inputId, btnId) {
         activeRecognition.onresult = function(e) {
             const transcript = e.results[0][0].transcript;
             const inputField = document.getElementById(inputId);
-            // Append with a space if there's already text, otherwise replace
-            inputField.value = inputField.value ? inputField.value + ' ' + transcript : transcript;
+            if (inputField) {
+                // Append with a space if there's already text, otherwise replace
+                inputField.value = inputField.value ? inputField.value + ' ' + transcript : transcript;
+            }
         };
 
         activeRecognition.onend = function() {
@@ -94,16 +75,25 @@ function toggleDictation(inputId, btnId) {
         };
 
         activeRecognition.onerror = function(e) {
-            alert('Speech recognition stopped: ' + e.error);
-            activeRecognition.stop();
+            console.error('Speech recognition error: ', e.error);
+            alert('Speech recognition stopped: ' + e.error + '\nEnsure you are running this on localhost or HTTPS.');
+            if (activeRecognition) {
+                activeRecognition.stop();
+            }
         };
 
-        activeRecognition.start();
+        try {
+            activeRecognition.start();
+        } catch (error) {
+            console.error("Could not start recognition:", error);
+        }
+        
     } else {
         alert("Your browser does not support the Web Speech API. Please use Chrome or Edge.");
     }
 }
-// --- 4. Registration Logic & n8n Integration ---
+
+// --- 4. Registration Logic & n8n Integration (index.html) ---
 const form = document.getElementById('registrationForm');
 if (form) {
     // Check if deadline passed (July 15, 2026, 17:00:00)
@@ -123,10 +113,9 @@ if (form) {
         document.getElementById('formMessage').style.color = "red";
     }
 
-    form.addEventListener('submit', async function(e) {
+    form.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Data cleanup mapping to your required structure
         const payload = {
             "student_name": document.getElementById('student_name').value.trim(),
             "contact_email": document.getElementById('contact_email').value.trim().toLowerCase(),
@@ -136,34 +125,40 @@ if (form) {
             "hackathon_idea": document.getElementById('hackathon_idea').value.trim()
         };
 
-        const webhookURL = "YOUR_N8N_WEBHOOK_URL_HERE"; // <-- Replace with actual n8n URL
+        const webhookURL = "YOUR_N8N_WEBHOOK_URL_HERE"; 
 
-        try {
-            document.getElementById('submitBtn').textContent = "Submitting...";
-            
-            // Uncomment the fetch block below when you add your n8n URL
-            /*
-            const response = await fetch(webhookURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            */
-            
-            // Simulating successful n8n dispatch for now
-            setTimeout(() => {
-                localStorage.setItem('hackathon_registered', 'true');
-                document.getElementById('formMessage').textContent = "Registration successful! Data sent to n8n.";
-                document.getElementById('formMessage').style.color = "green";
-                document.getElementById('submitBtn').disabled = true;
-                document.getElementById('submitBtn').textContent = "Submitted";
-                form.reset();
-            }, 1000);
+        document.getElementById('submitBtn').textContent = "Submitting...";
+        
+        // Simulating successful n8n dispatch
+        setTimeout(() => {
+            localStorage.setItem('hackathon_registered', 'true');
+            document.getElementById('formMessage').textContent = "Registration successful! Data sent to n8n.";
+            document.getElementById('formMessage').style.color = "green";
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = "Submitted";
+            form.reset();
+        }, 1000);
+    });
+}
 
-        } catch (error) {
-            document.getElementById('formMessage').textContent = "Error connecting to server.";
-            document.getElementById('formMessage').style.color = "red";
-            document.getElementById('submitBtn').textContent = "Submit Registration";
-        }
+// --- 5. Support Form Logic (support.html) ---
+const supportForm = document.getElementById('supportForm');
+if (supportForm) {
+    supportForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const btn = document.getElementById('supportSubmitBtn');
+        const msg = document.getElementById('supportMessage');
+
+        btn.textContent = "Sending...";
+        btn.disabled = true;
+
+        // Simulate sending to webhook/server
+        setTimeout(() => {
+            msg.textContent = "Support request submitted successfully. Our team will assist you shortly.";
+            msg.style.color = "green";
+            btn.textContent = "Request Sent";
+            supportForm.reset();
+        }, 1000);
     });
 }
