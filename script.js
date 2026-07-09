@@ -25,7 +25,6 @@ let activeMicButtonId = null;
 window.toggleDictation = function(inputId, btnId) {
     const btn = document.getElementById(btnId);
     
-    // Safety check: if the button doesn't exist, stop.
     if (!btn) {
         console.error("Mic button not found:", btnId);
         return;
@@ -106,59 +105,71 @@ if (form) {
         document.getElementById('formMessage').style.color = "red";
     }
 
-    // Check if already registered (Single entry limit)
+    // Check if already registered in this browser
     if (localStorage.getItem('hackathon_registered') === 'true') {
         document.getElementById('submitBtn').disabled = true;
         document.getElementById('formMessage').textContent = "You have already submitted an entry.";
         document.getElementById('formMessage').style.color = "red";
     }
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
+        // Data structure matching the n8n payload and Google Sheets schema exactly
         const payload = {
-            "student_name": document.getElementById('student_name').value.trim(),
-            "contact_email": document.getElementById('contact_email').value.trim().toLowerCase(),
-            "mobile_number": document.getElementById('mobile_number').value.trim(),
-            "college": document.getElementById('college').value.trim(),
-            "raw_skills": document.getElementById('raw_skills').value.trim(),
-            "hackathon_idea": document.getElementById('hackathon_idea').value.trim()
+            "Student_name": document.getElementById('Student_name').value.trim(),
+            "Email": document.getElementById('Email').value.trim().toLowerCase(),
+            "Mobile": document.getElementById('Mobile').value.trim(),
+            "College": document.getElementById('College').value.trim(),
+            "Skills": document.getElementById('Skills').value.trim(),
+            "Idea": document.getElementById('Idea').value.trim()
         };
 
-        const webhookURL = "YOUR_N8N_WEBHOOK_URL_HERE"; 
+        // WARNING: Replace with your actual n8n webhook URL before deploying
+        const webhookURL = "https://YOUR_N8N_DOMAIN/webhook/3bc80916-6b30-451d-8edd-a8266e832f95"; 
 
-        document.getElementById('submitBtn').textContent = "Submitting...";
-        
-        // Simulating successful n8n dispatch
-        setTimeout(() => {
-            localStorage.setItem('hackathon_registered', 'true');
-            document.getElementById('formMessage').textContent = "Registration successful! Data sent to n8n.";
-            document.getElementById('formMessage').style.color = "green";
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('submitBtn').textContent = "Submitted";
-            form.reset();
-        }, 1000);
-    });
-}
+        const submitBtn = document.getElementById('submitBtn');
+        const formMessage = document.getElementById('formMessage');
 
-// --- 5. Support Form Logic (support.html) ---
-const supportForm = document.getElementById('supportForm');
-if (supportForm) {
-    supportForm.addEventListener('submit', function(e) {
-        e.preventDefault();
+        submitBtn.textContent = "Screening Idea & Submitting...";
+        submitBtn.disabled = true;
 
-        const btn = document.getElementById('supportSubmitBtn');
-        const msg = document.getElementById('supportMessage');
+        try {
+            const response = await fetch(webhookURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-        btn.textContent = "Sending...";
-        btn.disabled = true;
+            const responseData = await response.json();
 
-        // Simulate sending to webhook/server
-        setTimeout(() => {
-            msg.textContent = "Support request submitted successfully. Our team will assist you shortly.";
-            msg.style.color = "green";
-            btn.textContent = "Request Sent";
-            supportForm.reset();
-        }, 1000);
-    });
-}
+            if (response.ok) { 
+                // Handles 200 OK responses (both SELECTED and REJECTED)
+                localStorage.setItem('hackathon_registered', 'true');
+                
+                if (responseData.status === 'SELECTED') {
+                    formMessage.textContent = "Registration Successful! You have been selected. Please check your email for the QR Code.";
+                    formMessage.style.color = "green";
+                } else if (responseData.status === 'REJECTED') {
+                    formMessage.textContent = "Registration submitted successfully, but your idea was not shortlisted.";
+                    formMessage.style.color = "orange";
+                } else {
+                    formMessage.textContent = "Registration submitted successfully.";
+                    formMessage.style.color = "green";
+                }
+
+                submitBtn.textContent = "Submitted";
+                form.reset();
+
+            } else if (response.status === 409) {
+                // Handles your custom 409 Duplicate response
+                formMessage.textContent = responseData.message || "Student already registered with this Email or Mobile.";
+                formMessage.style.color = "red";
+                submitBtn.textContent = "Submit Registration";
+                submitBtn.disabled = false;
+            } else {
+                throw new Error("Unexpected server response");
+            }
+
+        } catch (error) {
+            console.error("Webhook Error:", error
