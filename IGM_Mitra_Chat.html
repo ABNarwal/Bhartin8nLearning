@@ -460,9 +460,23 @@
 /* =========================================================================
    CONFIG — point this at your n8n Chat Trigger's production webhook URL
    (see IGM_Mitra_Chat_Workflow.json). Payload sent: { chatInput, mode, sessionId }
+
+   ⚠ Set DEMO_MODE to false AND replace WEBHOOK_URL below, or every reply
+   will keep coming from the local fakeReply() function, not your workflow.
    ========================================================================= */
 const WEBHOOK_URL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/igm-mitra-chat";
-const DEMO_MODE = true; // set to false once WEBHOOK_URL is live — demo mode fakes replies locally
+const DEMO_MODE = false; // must be false to actually call the webhook
+
+// Safety net: if someone forgets to edit WEBHOOK_URL above, force demo mode
+// and warn loudly in the console instead of silently failing every request.
+const WEBHOOK_IS_PLACEHOLDER = WEBHOOK_URL.includes("YOUR-N8N-DOMAIN");
+const EFFECTIVE_DEMO_MODE = DEMO_MODE || WEBHOOK_IS_PLACEHOLDER;
+if (WEBHOOK_IS_PLACEHOLDER) {
+  console.warn(
+    "[IGM Mitra] WEBHOOK_URL is still the placeholder value — running in DEMO MODE. " +
+    "Replace WEBHOOK_URL with your real n8n Production webhook URL and set DEMO_MODE = false."
+  );
+}
 
 /* ---------------- sample question sets ---------------- */
 const SAMPLE_QUESTIONS = {
@@ -644,23 +658,37 @@ async function sendMessage(){
 
   try{
     let reply;
-    if(DEMO_MODE){
+    if(EFFECTIVE_DEMO_MODE){
       reply = await fakeReply(text, currentMode);
+      if (WEBHOOK_IS_PLACEHOLDER) {
+        reply += "\n\n⚠️ (Demo mode — WEBHOOK_URL is not configured yet, so this is not coming from your n8n workflow.)";
+      }
     } else {
+      console.log("[IGM Mitra] Sending to webhook:", WEBHOOK_URL, { chatInput:text, mode: currentMode, sessionId });
       const res = await fetch(WEBHOOK_URL, {
         method:"POST",
         headers:{ "Content-Type":"application/json" },
         body: JSON.stringify({ chatInput:text, mode: currentMode, sessionId })
       });
+      if(!res.ok){
+        throw new Error(`Webhook responded with HTTP ${res.status} ${res.statusText}`);
+      }
       const data = await res.json();
+      console.log("[IGM Mitra] Webhook raw response:", data);
       reply = (Array.isArray(data) ? data[0] : data);
-      reply = reply.output || reply.reply || reply.answer || "I didn't quite catch that — could you rephrase?";
+      reply = reply.output || reply.reply || reply.answer || reply.text
+        || "The workflow responded, but I couldn't find a reply field in it (expected 'output', 'reply', or 'answer'). Check the browser console for the raw response.";
     }
     removeThinkingBubble();
     addBotBubble(reply);
   }catch(err){
+    console.error("[IGM Mitra] Webhook call failed:", err);
     removeThinkingBubble();
-    addBotBubble("I couldn't reach IGM Mitra's servers just now. Please try again in a moment.");
+    addBotBubble(
+      "⚠️ Couldn't reach the workflow (" + err.message + ").\n" +
+      "Open the browser console for details — common causes: workflow not Activated, " +
+      "wrong URL, or a CORS/network block."
+    );
   }finally{
     sendBtn.disabled = false;
   }
