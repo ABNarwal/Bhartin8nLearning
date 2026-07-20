@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGM Mitra — International Gita Mahotsav Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Yatra+One&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Light theme — peacock teal, marigold gold & Krishna-indigo ink on soft temple-marble white */
+    --bg:#F4F7F3;
+    --bg-glow:#EAF2EC;
+    --surface:#FFFFFF;
+    --surface-alt:#EFF4EE;
+    --ink:#1C2340;
+    --muted:#6B7185;
+    --gold:#B9791A;
+    --gold-soft: rgba(185,121,26,0.12);
+    --teal:#0E7368;
+    --teal-soft: rgba(14,115,104,0.12);
+    --vermillion:#B23A22;
+    --vermillion-soft: rgba(178,58,34,0.10);
+    --line: rgba(28,35,64,0.10);
+    --accent: var(--gold);
+    --accent-soft: var(--gold-soft);
+    --shadow: 0 16px 40px rgba(28,35,64,0.12);
+    --radius-lg: 22px;
+    --radius-md: 14px;
+    --radius-sm: 9px;
+  }
+  [data-mode="info"]{
+    --accent: var(--teal);
+    --accent-soft: var(--teal-soft);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    font-family:'Inter', system-ui, sans-serif;
+    background: radial-gradient(120% 90% at 50% -10%, var(--bg-glow) 0%, var(--bg) 55%);
+    color: var(--ink);
+    overflow:hidden;
+  }
+  .app{
+    position:relative;
+    height:100vh;
+    width:100%;
+  }
+
+  /* ---------- shared: chakra svg ---------- */
+  .chakra{ display:block; }
+  .chakra .rim{ fill:none; stroke:var(--accent); stroke-width:2.4; opacity:0.85; }
+  .chakra .hub{ fill:var(--accent); opacity:0.85; }
+  .chakra .spoke{ stroke:var(--accent); stroke-width:2; opacity:0.5; }
+  .spin{ animation: spin 26s linear infinite; transform-origin:center; }
+  .spin-fast{ animation-duration:2.4s; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){
+    .spin{ animation:none; }
+  }
+
+  /* ================= LANDING ================= */
+  .landing{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding: 32px 20px;
+    text-align:center;
+    transition: opacity .5s ease, transform .5s ease;
+  }
+  .landing.hide{ opacity:0; transform: scale(.97); pointer-events:none; }
+
+  .landing-glow{
+    position:absolute; top:50%; left:50%;
+    width:640px; height:640px;
+    transform:translate(-50%,-50%);
+    z-index:0;
+    opacity:0.7;
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    position:relative; z-index:1;
+    font-size:12.5px; letter-spacing:.22em; text-transform:uppercase;
+    color: var(--muted);
+    margin-bottom:18px;
+    font-weight:600;
+  }
+  .eyebrow span{ color:var(--gold); }
+
+  .wordmark{
+    position:relative; z-index:1;
+    font-family:'Yatra One', cursive;
+    font-size: clamp(42px, 8vw, 68px);
+    line-height:1;
+    margin:0 0 14px;
+    letter-spacing:.01em;
+    background: linear-gradient(180deg, #E0A526 0%, var(--gold) 55%, #7A5210 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  .tagline{
+    position:relative; z-index:1;
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size: clamp(18px, 2.4vw, 24px);
+    color:var(--ink);
+    opacity:.82;
+    max-width:520px;
+    margin:0 0 44px;
+    font-weight:500;
+  }
+
+  .mode-grid{
+    position:relative; z-index:1;
+    display:flex; gap:22px; flex-wrap:wrap; justify-content:center;
+    max-width:720px;
+  }
+  .mode-card{
+    width:300px;
+    text-align:left;
+    background: var(--surface);
+    border:1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding:26px 24px;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    box-shadow: 0 8px 24px rgba(28,35,64,0.06);
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .mode-card:hover, .mode-card:focus-visible{
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+    outline:none;
+  }
+  .mode-card:nth-child(1):hover{ border-color: var(--gold); }
+  .mode-card:nth-child(2):hover{ border-color: var(--teal); }
+
+  .mode-card .icon-wrap{
+    width:50px; height:50px;
+    border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:16px;
+  }
+  .mode-card.oracle .icon-wrap{ background: var(--gold-soft); }
+  .mode-card.info .icon-wrap{ background: var(--teal-soft); }
+  .mode-card.oracle .icon-wrap svg{ stroke:var(--gold); }
+  .mode-card.info .icon-wrap svg{ stroke:var(--teal); }
+
+  .mode-card h2{
+    font-family:'Cormorant Garamond', serif;
+    font-size:24px;
+    margin:0 0 8px;
+    font-weight:600;
+    color: var(--ink);
+  }
+  .mode-card p{
+    font-size:13.5px;
+    line-height:1.55;
+    color: var(--muted);
+    margin:0 0 16px;
+  }
+  .mode-card .cta{
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    display:flex; align-items:center; gap:6px;
+  }
+  .mode-card.oracle .cta{ color:var(--gold); }
+  .mode-card.info .cta{ color:var(--teal); }
+  .mode-card .cta svg{ transition: transform .2s ease; }
+  .mode-card:hover .cta svg{ transform: translateX(4px); }
+
+  .footnote{
+    position:relative; z-index:1;
+    margin-top:38px;
+    font-size:11.5px;
+    color: var(--muted);
+    opacity:.85;
+    letter-spacing:.03em;
+  }
+
+  /* ================= CHAT VIEW ================= */
+  .chat{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+    opacity:0; pointer-events:none;
+    transform: translateY(14px);
+    transition: opacity .45s ease, transform .45s ease;
+  }
+  .chat.show{ opacity:1; pointer-events:auto; transform:none; }
+
+  .chat-header{
+    display:flex; align-items:center; gap:12px;
+    padding: 16px 20px;
+    border-bottom:1px solid var(--line);
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(6px);
+    flex-shrink:0;
+  }
+  .back-btn{
+    width:36px; height:36px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--surface-alt);
+    border:1px solid var(--line);
+    color:var(--ink);
+    cursor:pointer;
+    flex-shrink:0;
+    transition: background .2s ease;
+  }
+  .back-btn:hover{ background: var(--accent-soft); }
+  .chat-header .chakra{ flex-shrink:0; }
+  .header-text{ min-width:0; }
+  .header-text h1{
+    font-family:'Cormorant Garamond', serif;
+    font-size:19px; margin:0; font-weight:600;
+    color: var(--ink);
+  }
+  .header-text p{
+    font-size:11.5px; color:var(--muted); margin:2px 0 0;
+  }
+
+  .chat-scroll{
+    flex:1;
+    overflow-y:auto;
+    padding: 22px 20px 10px;
+    display:flex; flex-direction:column; gap:14px;
+    scroll-behavior:smooth;
+  }
+  .chat-scroll::-webkit-scrollbar{ width:6px; }
+  .chat-scroll::-webkit-scrollbar-thumb{ background: var(--surface-alt); border-radius:6px; }
+
+  .bubble-row{ display:flex; max-width:100%; }
+  .bubble-row.user{ justify-content:flex-end; }
+  .bubble{
+    max-width:min(78%, 520px);
+    padding:12px 16px;
+    border-radius: var(--radius-md);
+    font-size:14.5px;
+    line-height:1.6;
+    white-space:pre-wrap;
+  }
+  .bubble-row.bot .bubble{
+    background: var(--surface);
+    border:1px solid var(--line);
+    box-shadow: 0 2px 10px rgba(28,35,64,0.05);
+    border-top-left-radius:4px;
+    color: var(--ink);
+  }
+  .bubble-row.user .bubble{
+    background: var(--accent);
+    color: #FFFFFF;
+    font-weight:500;
+    border-top-right-radius:4px;
+  }
+  .bubble-row.system .bubble{
+    background:transparent;
+    border:1px dashed var(--line);
+    color:var(--muted);
+    font-size:12.5px;
+    margin:0 auto;
+  }
+
+  .thinking{ display:flex; align-items:center; gap:10px; }
+  .thinking span{ font-size:13px; color:var(--muted); }
+
+  /* --- composer --- */
+  .composer{
+    flex-shrink:0;
+    border-top:1px solid var(--line);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(6px);
+    padding: 12px 16px 16px;
+  }
+  .chip-rail{
+    display:flex; gap:8px;
+    overflow-x:auto;
+    padding-bottom:10px;
+    scrollbar-width:none;
+  }
+  .chip-rail::-webkit-scrollbar{ display:none; }
+  .chip{
+    flex-shrink:0;
+    font-size:12.5px;
+    padding:8px 14px;
+    border-radius:999px;
+    background: var(--surface-alt);
+    border:1px solid var(--line);
+    color: var(--ink);
+    cursor:pointer;
+    white-space:nowrap;
+    transition: background .2s ease, border-color .2s ease;
+  }
+  .chip:hover{ border-color: var(--accent); background: var(--accent-soft); }
+  .chip.emergency{ border-color: rgba(178,58,34,0.35); color: var(--vermillion); background: var(--vermillion-soft); }
+  .chip.emergency:hover{ background: rgba(178,58,34,0.16); border-color: var(--vermillion); }
+
+  .input-wrap{ position:relative; }
+  .autocomplete-list{
+    position:absolute;
+    bottom: calc(100% + 8px);
+    left:0; right:0;
+    background: var(--surface);
+    border:1px solid var(--line);
+    border-radius: var(--radius-md);
+    overflow:hidden;
+    box-shadow: var(--shadow);
+    display:none;
+    z-index:5;
+  }
+  .autocomplete-list.show{ display:block; }
+  .ac-item{
+    padding:10px 16px;
+    font-size:13.5px;
+    cursor:pointer;
+    border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:8px;
+    color: var(--ink);
+  }
+  .ac-item:last-child{ border-bottom:none; }
+  .ac-item:hover, .ac-item.active{ background: var(--accent-soft); }
+  .ac-item svg{ flex-shrink:0; opacity:.5; }
+  .ac-item mark{ background:none; color:var(--accent); font-weight:600; }
+
+  .did-you-mean{
+    font-size:12px;
+    color: var(--muted);
+    padding: 0 4px 8px;
+    display:none;
+  }
+  .did-you-mean.show{ display:block; }
+  .did-you-mean b{ color:var(--accent); cursor:pointer; font-weight:600; }
+
+  .composer-row{
+    display:flex; align-items:center; gap:10px;
+  }
+  .composer-row input[type="text"]{
+    flex:1;
+    background: var(--surface-alt);
+    border:1px solid var(--line);
+    border-radius: 999px;
+    padding: 13px 18px;
+    color: var(--ink);
+    font-size:14.5px;
+    font-family:inherit;
+    outline:none;
+    transition: border-color .2s ease;
+  }
+  .composer-row input[type="text"]:focus{ border-color: var(--accent); }
+  .composer-row input::placeholder{ color: var(--muted); }
+
+  .send-btn{
+    width:46px; height:46px; border-radius:50%;
+    background: var(--accent);
+    border:none;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    flex-shrink:0;
+    color:#FFFFFF;
+    transition: transform .15s ease, opacity .15s ease;
+  }
+  .send-btn:hover{ transform: scale(1.06); }
+  .send-btn:disabled{ opacity:.4; cursor:not-allowed; transform:none; }
+
+  @media (max-width:560px){
+    .mode-card{ width:100%; max-width:340px; }
+    .bubble{ max-width:86%; }
+  }
+</style>
+</head>
+<body data-mode="landing">
+<div class="app">
+
+  <!-- ============ LANDING ============ -->
+  <section class="landing" id="landing">
+    <svg class="landing-glow" viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="70" cy="60" r="95" fill="url(#glowGradTeal)"/>
+      <circle cx="130" cy="130" r="95" fill="url(#glowGrad)"/>
+      <defs>
+        <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#C9A227" stop-opacity="0.20"/>
+          <stop offset="100%" stop-color="#C9A227" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="glowGradTeal" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#0E7368" stop-opacity="0.16"/>
+          <stop offset="100%" stop-color="#0E7368" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+    </svg>
+
+    <div class="eyebrow">Kurukshetra <span>·</span> International Gita Mahotsav</div>
+    <h1 class="wordmark">IGM Mitra</h1>
+    <p class="tagline">"Whenever dharma declines, I shall return." Your companion for wisdom and wayfinding at the Mahotsav.</p>
+
+    <div class="mode-grid">
+      <div class="mode-card oracle" tabindex="0" role="button" id="card-oracle" aria-label="Open Gita Oracle chat">
+        <div class="icon-wrap">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>
+        </div>
+        <h2>Gita Oracle</h2>
+        <p>Ask Krishna's guidance on dharma, karma, doubt or difficulty — answered in the voice of the Bhagavad Gita.</p>
+        <div class="cta">Seek guidance <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </div>
+
+      <div class="mode-card info" tabindex="0" role="button" id="card-info" aria-label="Open IGM Info chat">
+        <div class="icon-wrap">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="14.5,9.5 12,14.5 9.5,14.5 12,9.5"/></svg>
+        </div>
+        <h2>IGM Info</h2>
+        <p>Events, stalls, parking, stay, transport, emergency contacts — everything to navigate the Mahotsav grounds.</p>
+        <div class="cta">Plan my visit <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </div>
+    </div>
+
+    <p class="footnote">A district initiative for visitors to the International Gita Mahotsav, Kurukshetra</p>
+  </section>
+
+  <!-- ============ CHAT VIEW ============ -->
+  <section class="chat" id="chat">
+    <header class="chat-header">
+      <button class="back-btn" id="back-btn" aria-label="Back to home">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <svg class="chakra spin" id="header-chakra" width="34" height="34" viewBox="0 0 100 100">
+        <circle class="rim" cx="50" cy="50" r="40"/>
+        <circle class="hub" cx="50" cy="50" r="5"/>
+        <g id="header-spokes"></g>
+      </svg>
+      <div class="header-text">
+        <h1 id="chat-title">Gita Oracle</h1>
+        <p id="chat-subtitle">Wisdom from the Bhagavad Gita</p>
+      </div>
+    </header>
+
+    <div class="chat-scroll" id="chat-scroll"></div>
+
+    <div class="composer">
+      <div class="chip-rail" id="chip-rail"></div>
+      <div class="did-you-mean" id="dym"></div>
+      <div class="input-wrap">
+        <div class="autocomplete-list" id="ac-list"></div>
+        <div class="composer-row">
+          <input type="text" id="chat-input" placeholder="Type your question…" autocomplete="off" spellcheck="true" />
+          <button class="send-btn" id="send-btn" aria-label="Send message">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* =========================================================================
+   CONFIG — point this at your n8n Chat Trigger's production webhook URL
+   (see IGM_Mitra_Chat_Workflow.json). Payload sent: { chatInput, mode, sessionId }
+   ========================================================================= */
+const WEBHOOK_URL = "https://YOUR-N8N-DOMAIN/webhook/igm-mitra-chat-webhook";
+const DEMO_MODE = true; // set to false once WEBHOOK_URL is live — demo mode fakes replies locally
+
+/* ---------------- sample question sets ---------------- */
+const SAMPLE_QUESTIONS = {
+  oracle: [
+    "I'm feeling anxious about my future",
+    "What does Krishna say about karma?",
+    "Guidance for facing failure",
+    "How do I let go of attachment to results?",
+    "Why do good people suffer?",
+    "How can I find inner peace?"
+  ],
+  info: [
+    "What's happening today?",
+    "Where can I park my vehicle?",
+    "Nearest ambulance point",
+    "Where can I find food stalls?",
+    "How do I reach Kurukshetra from Delhi?",
+    "Dharamshala near Brahma Sarovar",
+    "Emergency contact numbers",
+    "Wheelchair facility available?",
+    "Rangoli competition details",
+    "Lost and found centre"
+  ]
+};
+
+const EMERGENCY_TERMS = ["ambulance","emergency","fire","lost","police","medical"];
+
+/* vocabulary used for autocomplete + autocorrect (info mode) */
+const VOCAB = [
+  "parking","drinking water","lost and found","fire brigade","ambulance",
+  "wheelchair","dharamshala","hotel","stalls","food stall","handicraft",
+  "embroidery","furniture","emergency contact","facilities","itinerary",
+  "transportation","auto rickshaw","train","bus","marathon","rangoli",
+  "essay writing","quiz","gita quiz","state level function","events today",
+  "brahma sarovar","jyotisar","toilet","cloak room","charging point"
+];
+
+/* ---------------- state ---------------- */
+let currentMode = "oracle";
+const sessionId = "web-" + Math.random().toString(36).slice(2, 10);
+
+const body = document.body;
+const landing = document.getElementById("landing");
+const chat = document.getElementById("chat");
+const chatScroll = document.getElementById("chat-scroll");
+const chatTitle = document.getElementById("chat-title");
+const chatSubtitle = document.getElementById("chat-subtitle");
+const chipRail = document.getElementById("chip-rail");
+const input = document.getElementById("chat-input");
+const sendBtn = document.getElementById("send-btn");
+const acList = document.getElementById("ac-list");
+const dym = document.getElementById("dym");
+
+/* ---------------- chakra spokes (18, for the 18 chapters of the Gita) --- */
+function buildSpokes(containerId, r1, r2){
+  const g = document.getElementById(containerId);
+  let html = "";
+  for(let i=0;i<18;i++){
+    const a = (i * 20) * Math.PI/180;
+    const x1 = 50 + r1*Math.cos(a), y1 = 50 + r1*Math.sin(a);
+    const x2 = 50 + r2*Math.cos(a), y2 = 50 + r2*Math.sin(a);
+    html += `<line class="spoke" x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}"/>`;
+  }
+  g.innerHTML = html;
+}
+buildSpokes("header-spokes", 8, 38);
+
+/* ---------------- mode switching ---------------- */
+function openMode(mode){
+  currentMode = mode;
+  body.setAttribute("data-mode", mode);
+  chatTitle.textContent = mode === "oracle" ? "Gita Oracle" : "IGM Info";
+  chatSubtitle.textContent = mode === "oracle"
+    ? "Wisdom from the Bhagavad Gita"
+    : "Events · Logistics · Stalls · Travel";
+  input.placeholder = mode === "oracle"
+    ? "Ask about dharma, karma, doubt…"
+    : "Ask about parking, stalls, timings…";
+
+  chatScroll.innerHTML = "";
+  addSystemBubble(mode === "oracle"
+    ? "You're speaking with the Gita Oracle. Share what's on your mind."
+    : "Ask me anything about the Mahotsav — or tap a suggestion below.");
+  addBotBubble(mode === "oracle"
+    ? "🕉️ I am here, as I was for Arjuna on this very field of Kurukshetra. What troubles you?"
+    : "👋 Namaste! I can help with events, parking, stalls, stay, transport and emergency info. What would you like to know?");
+
+  renderChips(mode);
+  landing.classList.add("hide");
+  chat.classList.add("show");
+  setTimeout(()=>input.focus(), 300);
+}
+
+function goHome(){
+  chat.classList.remove("show");
+  landing.classList.remove("hide");
+  body.setAttribute("data-mode","landing");
+  input.value = "";
+  hideAutocomplete();
+}
+
+document.getElementById("card-oracle").addEventListener("click", ()=>openMode("oracle"));
+document.getElementById("card-info").addEventListener("click", ()=>openMode("info"));
+[["card-oracle","oracle"],["card-info","info"]].forEach(([id,mode])=>{
+  document.getElementById(id).addEventListener("keydown", e=>{
+    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openMode(mode); }
+  });
+});
+document.getElementById("back-btn").addEventListener("click", goHome);
+
+/* ---------------- chips (sample questions) ---------------- */
+function renderChips(mode){
+  chipRail.innerHTML = "";
+  SAMPLE_QUESTIONS[mode].forEach(q=>{
+    const chip = document.createElement("button");
+    chip.className = "chip";
+    if(EMERGENCY_TERMS.some(t=>q.toLowerCase().includes(t))) chip.classList.add("emergency");
+    chip.textContent = q;
+    chip.addEventListener("click", ()=>{ input.value = q; sendMessage(); });
+    chipRail.appendChild(chip);
+  });
+}
+
+/* ---------------- chat bubbles ---------------- */
+function addUserBubble(text){
+  const row = document.createElement("div");
+  row.className = "bubble-row user";
+  row.innerHTML = `<div class="bubble"></div>`;
+  row.firstChild.textContent = text;
+  chatScroll.appendChild(row);
+  scrollDown();
+}
+function addBotBubble(text){
+  const row = document.createElement("div");
+  row.className = "bubble-row bot";
+  row.innerHTML = `<div class="bubble"></div>`;
+  row.firstChild.textContent = text;
+  chatScroll.appendChild(row);
+  scrollDown();
+}
+function addSystemBubble(text){
+  const row = document.createElement("div");
+  row.className = "bubble-row system";
+  row.innerHTML = `<div class="bubble"></div>`;
+  row.firstChild.textContent = text;
+  chatScroll.appendChild(row);
+  scrollDown();
+}
+function addThinkingBubble(){
+  const row = document.createElement("div");
+  row.className = "bubble-row bot";
+  row.id = "thinking-row";
+  row.innerHTML = `<div class="bubble thinking">
+      <svg class="chakra spin spin-fast" width="18" height="18" viewBox="0 0 100 100">
+        <circle class="rim" cx="50" cy="50" r="40"/><circle class="hub" cx="50" cy="50" r="5"/>
+      </svg>
+      <span>Consulting the archives…</span>
+    </div>`;
+  chatScroll.appendChild(row);
+  scrollDown();
+}
+function removeThinkingBubble(){
+  const row = document.getElementById("thinking-row");
+  if(row) row.remove();
+}
+function scrollDown(){
+  requestAnimationFrame(()=>{ chatScroll.scrollTop = chatScroll.scrollHeight; });
+}
+
+/* ---------------- send flow ---------------- */
+async function sendMessage(){
+  const text = input.value.trim();
+  if(!text) return;
+  hideAutocomplete();
+  addUserBubble(text);
+  input.value = "";
+  sendBtn.disabled = true;
+  addThinkingBubble();
+
+  try{
+    let reply;
+    if(DEMO_MODE){
+      reply = await fakeReply(text, currentMode);
+    } else {
+      const res = await fetch(WEBHOOK_URL, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ chatInput:text, mode: currentMode, sessionId })
+      });
+      const data = await res.json();
+      reply = (Array.isArray(data) ? data[0] : data);
+      reply = reply.output || reply.reply || reply.answer || "I didn't quite catch that — could you rephrase?";
+    }
+    removeThinkingBubble();
+    addBotBubble(reply);
+  }catch(err){
+    removeThinkingBubble();
+    addBotBubble("I couldn't reach IGM Mitra's servers just now. Please try again in a moment.");
+  }finally{
+    sendBtn.disabled = false;
+  }
+}
+sendBtn.addEventListener("click", sendMessage);
+input.addEventListener("keydown", e=>{
+  if(e.key === "Enter" && !acList.classList.contains("show")){ sendMessage(); }
+});
+
+/* demo-mode canned replies so this page works standalone before the webhook is wired up */
+function fakeReply(text, mode){
+  return new Promise(resolve=>{
+    setTimeout(()=>{
+      const t = text.toLowerCase();
+      if(mode === "oracle"){
+        resolve("🕉️ As I told Arjuna: you have the right to your actions, never to the fruits thereof. Do your duty with a steady heart, and release your grip on the outcome — peace lives in that release, not in the result.");
+      } else if(t.includes("park")){
+        resolve("📍 Parking Zone A (cars) is near the Panorama & Science Centre, 0.8 km from the venue, ₹50/day. Zone B handles buses, Zone C is for two-wheelers.");
+      } else if(t.includes("ambulance") || t.includes("emergency")){
+        resolve("🚑 The nearest ambulance point is near Gate 1, Brahma Sarovar Main Ghat — call 108 for any real emergency, available 24x7.");
+      } else if(t.includes("food") || t.includes("stall")){
+        resolve("🍲 Food stalls are concentrated in Zone B, Food Court Row 1 — try the Rajasthani Raj Kachori Corner or Haryana Mithai Bhandar.");
+      } else if(t.includes("reach") || t.includes("delhi") || t.includes("train") || t.includes("bus")){
+        resolve("🚆 From Delhi: train to Kurukshetra Junction (~2.5-3 hrs) or Haryana Roadways bus from Kashmere Gate ISBT. Autos run from the station to Brahma Sarovar, 6 AM–11 PM.");
+      } else if(t.includes("dharamshala") || t.includes("stay") || t.includes("hotel")){
+        resolve("🛏️ Geeta Niketan Dharamshala is 0.5 km from Brahma Sarovar. For hotels, I can search live options for you — note these aren't officially recommended by the district.");
+      } else if(t.includes("wheelchair")){
+        resolve("♿ Free wheelchairs are available near Gate 1 and the Kesav Park entry — a valid ID deposit is required.");
+      } else if(t.includes("rangoli") || t.includes("quiz") || t.includes("essay") || t.includes("marathon")){
+        resolve("🎨 The Rangoli and Essay competitions run on Day 2 at the Craft Mela Ground / State Exhibition Hall — on-spot registration. The Gita Run marathon needs online pre-registration.");
+      } else if(t.includes("lost")){
+        resolve("🔎 The main Lost & Found Centre is near Gate 1, Brahma Sarovar — open 8 AM to 10 PM.");
+      } else {
+        resolve("This is a demo reply — connect WEBHOOK_URL to your live n8n workflow to pull real answers from the IGM data sheet.");
+      }
+    }, 700 + Math.random()*500);
+  });
+}
+
+/* ---------------- autocomplete ---------------- */
+function hideAutocomplete(){ acList.classList.remove("show"); acList.innerHTML=""; }
+
+function renderAutocomplete(matches, query){
+  if(!matches.length){ hideAutocomplete(); return; }
+  acList.innerHTML = matches.slice(0,6).map(m=>{
+    const idx = m.toLowerCase().indexOf(query.toLowerCase());
+    let label = m;
+    if(idx >= 0 && query){
+      label = m.slice(0,idx) + "<mark>" + m.slice(idx, idx+query.length) + "</mark>" + m.slice(idx+query.length);
+    }
+    return `<div class="ac-item" data-value="${m.replace(/"/g,'&quot;')}">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <span>${label}</span>
+    </div>`;
+  }).join("");
+  acList.classList.add("show");
+  acList.querySelectorAll(".ac-item").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      input.value = el.dataset.value;
+      hideAutocomplete();
+      input.focus();
+    });
+  });
+}
+
+/* Levenshtein distance for autocorrect suggestions */
+function levenshtein(a, b){
+  const m = a.length, n = b.length;
+  const dp = Array.from({length:m+1}, ()=>new Array(n+1).fill(0));
+  for(let i=0;i<=m;i++) dp[i][0]=i;
+  for(let j=0;j<=n;j++) dp[0][j]=j;
+  for(let i=1;i<=m;i++){
+    for(let j=1;j<=n;j++){
+      dp[i][j] = a[i-1]===b[j-1]
+        ? dp[i-1][j-1]
+        : 1 + Math.min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1]);
+    }
+  }
+  return dp[m][n];
+}
+
+function checkAutocorrect(query){
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  if(!words.length){ dym.classList.remove("show"); return; }
+  const lastWord = words[words.length-1];
+  if(lastWord.length < 3){ dym.classList.remove("show"); return; }
+
+  let best = null, bestDist = Infinity;
+  VOCAB.forEach(term=>{
+    term.split(" ").forEach(tw=>{
+      if(Math.abs(tw.length - lastWord.length) > 2) return;
+      const d = levenshtein(lastWord, tw);
+      if(d < bestDist){ bestDist = d; best = tw; }
+    });
+  });
+
+  if(best && bestDist > 0 && bestDist <= 2 && best !== lastWord){
+    dym.innerHTML = `Did you mean <b id="dym-suggestion">${best}</b>?`;
+    dym.classList.add("show");
+    document.getElementById("dym-suggestion").addEventListener("click", ()=>{
+      words[words.length-1] = best;
+      input.value = words.join(" ") + " ";
+      dym.classList.remove("show");
+      input.focus();
+    });
+  } else {
+    dym.classList.remove("show");
+  }
+}
+
+input.addEventListener("input", ()=>{
+  const q = input.value.trim();
+  if(!q){ hideAutocomplete(); dym.classList.remove("show"); return; }
+
+  const pool = SAMPLE_QUESTIONS[currentMode].concat(currentMode==="info" ? VOCAB : []);
+  const matches = pool.filter(p => p.toLowerCase().includes(q.toLowerCase()));
+  renderAutocomplete(matches, q);
+
+  if(currentMode === "info") checkAutocorrect(q);
+});
+
+/* keyboard navigation for autocomplete list */
+let acActiveIndex = -1;
+input.addEventListener("keydown", e=>{
+  const items = Array.from(acList.querySelectorAll(".ac-item"));
+  if(!acList.classList.contains("show") || !items.length) return;
+
+  if(e.key === "ArrowDown"){
+    e.preventDefault();
+    acActiveIndex = Math.min(acActiveIndex+1, items.length-1);
+    items.forEach((it,i)=>it.classList.toggle("active", i===acActiveIndex));
+  } else if(e.key === "ArrowUp"){
+    e.preventDefault();
+    acActiveIndex = Math.max(acActiveIndex-1, 0);
+    items.forEach((it,i)=>it.classList.toggle("active", i===acActiveIndex));
+  } else if(e.key === "Enter" && acActiveIndex >= 0){
+    e.preventDefault();
+    input.value = items[acActiveIndex].dataset.value;
+    hideAutocomplete();
+    acActiveIndex = -1;
+  } else if(e.key === "Escape"){
+    hideAutocomplete();
+  }
+});
+document.addEventListener("click", e=>{
+  if(!e.target.closest(".input-wrap")) hideAutocomplete();
+});
+</script>
+</body>
+</html>
