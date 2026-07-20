@@ -469,7 +469,7 @@ const DEMO_MODE = false; // must be false to actually call the webhook
 
 // Safety net: if someone forgets to edit WEBHOOK_URL above, force demo mode
 // and warn loudly in the console instead of silently failing every request.
-const WEBHOOK_IS_PLACEHOLDER = WEBHOOK_URL.includes("YOUR-N8N-DOMAIN");
+const WEBHOOK_IS_PLACEHOLDER = WEBHOOK_URL.includes("https://bhartiamit0703july07.app.n8n.cloud/webhook/igm-mitra-chat");
 const EFFECTIVE_DEMO_MODE = DEMO_MODE || WEBHOOK_IS_PLACEHOLDER;
 if (WEBHOOK_IS_PLACEHOLDER) {
   console.warn(
