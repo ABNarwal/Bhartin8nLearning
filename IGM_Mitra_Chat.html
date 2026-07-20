@@ -458,24 +458,41 @@
 
 <script>
 /* =========================================================================
-   CONFIG — point this at your n8n Chat Trigger's production webhook URL
-   (see IGM_Mitra_Chat_Workflow.json). Payload sent: { chatInput, mode, sessionId }
+   CONFIG — two separate n8n workflows power this page:
+     1) WEBHOOK_URL        -> "GitaModel" workflow (Webhook node, path igm-mitra-chat)
+                              handles Events / Directory / Info questions.
+     2) ORACLE_WEBHOOK_URL -> Gita Oracle workflow (Webhook1 node, path gita-oracle)
+                              handles Gita Wisdom / Krishna-persona questions.
+   Payload sent to whichever is active: { chatInput, question, mode, sessionId }
 
-   ⚠ Set DEMO_MODE to false AND replace WEBHOOK_URL below, or every reply
-   will keep coming from the local fakeReply() function, not your workflow.
+   ⚠ Set DEMO_MODE to false AND replace BOTH URLs below with your real
+   Production webhook URLs, or every reply will keep coming from the local
+   fakeReply() function, not your workflows.
    ========================================================================= */
+// IGM Info / Directory / Events workflow (the "GitaModel" workflow, Webhook node, path: igm-mitra-chat)
 const WEBHOOK_URL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/igm-mitra-chat";
-const DEMO_MODE = false; // must be false to actually call the webhook
 
-// Safety net: if someone forgets to edit WEBHOOK_URL above, force demo mode
+// Gita Oracle / Gita Wisdom workflow (separate workflow, Webhook1 node, path: gita-oracle)
+// ⚠ Double-check this against the Production URL shown on the Webhook1 node in n8n —
+// it must end in /webhook/gita-oracle (not /webhook-test/gita-oracle).
+const ORACLE_WEBHOOK_URL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/gita-oracle";
+
+const DEMO_MODE = false; // must be false to actually call the webhooks
+
+// Safety net: if someone forgets to edit the URLs above, force demo mode
 // and warn loudly in the console instead of silently failing every request.
-const WEBHOOK_IS_PLACEHOLDER = WEBHOOK_URL.includes("YOUR-N8N-DOMAIN");
+const WEBHOOK_IS_PLACEHOLDER = WEBHOOK_URL.includes("YOUR-N8N-DOMAIN") || ORACLE_WEBHOOK_URL.includes("YOUR-N8N-DOMAIN");
 const EFFECTIVE_DEMO_MODE = DEMO_MODE || WEBHOOK_IS_PLACEHOLDER;
 if (WEBHOOK_IS_PLACEHOLDER) {
   console.warn(
-    "[IGM Mitra] WEBHOOK_URL is still the placeholder value — running in DEMO MODE. " +
-    "Replace WEBHOOK_URL with your real n8n Production webhook URL and set DEMO_MODE = false."
+    "[IGM Mitra] One of the webhook URLs is still a placeholder value — running in DEMO MODE. " +
+    "Replace WEBHOOK_URL / ORACLE_WEBHOOK_URL with your real n8n Production webhook URLs and set DEMO_MODE = false."
   );
+}
+
+// Pick the correct production URL for the mode the visitor is currently in
+function activeWebhookUrl(mode){
+  return mode === "oracle" ? ORACLE_WEBHOOK_URL : WEBHOOK_URL;
 }
 
 /* ---------------- sample question sets ---------------- */
@@ -665,11 +682,12 @@ async function sendMessage(){
         reply += "\n\n⚠️ (Demo mode — WEBHOOK_URL is not configured yet, so this is not coming from your n8n workflow.)";
       }
     } else {
-      console.log("[IGM Mitra] Sending to webhook:", WEBHOOK_URL, { chatInput:text, mode: currentMode, sessionId });
-      const res = await fetch(WEBHOOK_URL, {
+      const targetUrl = activeWebhookUrl(currentMode);
+      console.log("[IGM Mitra] Sending to webhook:", targetUrl, { chatInput:text, mode: currentMode, sessionId });
+      const res = await fetch(targetUrl, {
         method:"POST",
         headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ chatInput:text, mode: currentMode, sessionId })
+        body: JSON.stringify({ chatInput:text, question:text, mode: currentMode, sessionId })
       });
       if(!res.ok){
         throw new Error(`Webhook responded with HTTP ${res.status} ${res.statusText}`);
