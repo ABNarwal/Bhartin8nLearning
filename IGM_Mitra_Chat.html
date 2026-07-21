@@ -478,7 +478,7 @@ const WEBHOOK_URL = "https://bhartiamit0703july21.app.n8n.cloud/webhook/igm-mitr
 const ORACLE_WEBHOOK_URL = "https://bhartiamit0703july21.app.n8n.cloud/webhook/gita-oracle";
 
 const DEMO_MODE = false; // must be false to actually call the webhooks
-const WEBHOOK_IS_PLACEHOLDER = false;
+//const WEBHOOK_IS_PLACEHOLDER = false;
 // Safety net: if someone forgets to edit the URLs above, force demo mode
 // and warn loudly in the console instead of silently failing every request.
 const WEBHOOK_IS_PLACEHOLDER = WEBHOOK_URL.includes("https://bhartiamit0703july21.app.n8n.cloud/webhook/igm-mitra-chat") || ORACLE_WEBHOOK_URL.includes("https://bhartiamit0703july21.app.n8n.cloud/webhook/gita-oracle");
