@@ -470,18 +470,18 @@
    fakeReply() function, not your workflows.
    ========================================================================= */
 // IGM Info / Directory / Events workflow (the "GitaModel" workflow, Webhook node, path: igm-mitra-chat)
-const WEBHOOK_URL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/igm-mitra-chat";
+const WEBHOOK_URL = "https://bhartiamit0703july21.app.n8n.cloud/webhook/igm-mitra-chat";
 
 // Gita Oracle / Gita Wisdom workflow (separate workflow, Webhook1 node, path: gita-oracle)
 // ⚠ Double-check this against the Production URL shown on the Webhook1 node in n8n —
 // it must end in /webhook/gita-oracle (not /webhook-test/gita-oracle).
-const ORACLE_WEBHOOK_URL = "https://bhartiamit0703july07.app.n8n.cloud/webhook/gita-oracle";
+const ORACLE_WEBHOOK_URL = "https://bhartiamit0703july21.app.n8n.cloud/webhook/gita-oracle";
 
 const DEMO_MODE = false; // must be false to actually call the webhooks
 
 // Safety net: if someone forgets to edit the URLs above, force demo mode
 // and warn loudly in the console instead of silently failing every request.
-const WEBHOOK_IS_PLACEHOLDER = WEBHOOK_URL.includes("https://bhartiamit0703july07.app.n8n.cloud/webhook/igm-mitra-chat") || ORACLE_WEBHOOK_URL.includes("https://bhartiamit0703july07.app.n8n.cloud/webhook/gita-oracle");
+const WEBHOOK_IS_PLACEHOLDER = WEBHOOK_URL.includes("https://bhartiamit0703july21.app.n8n.cloud/webhook/igm-mitra-chat") || ORACLE_WEBHOOK_URL.includes("https://bhartiamit0703july21.app.n8n.cloud/webhook/gita-oracle");
 const EFFECTIVE_DEMO_MODE = DEMO_MODE || WEBHOOK_IS_PLACEHOLDER;
 if (WEBHOOK_IS_PLACEHOLDER) {
   console.warn(
