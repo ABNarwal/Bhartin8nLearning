@@ -352,7 +352,7 @@
     transition: border-color .2s ease;
   }
   .composer-row input[type="text"]:focus{ border-color: var(--accent); }
-  .composer-row input::{ color: var(--muted); }
+  .composer-row input::placeholder{ color: var(--muted); }
 
   .send-btn{
     width:46px; height:46px; border-radius:50%;
@@ -445,7 +445,7 @@
       <div class="input-wrap">
         <div class="autocomplete-list" id="ac-list"></div>
         <div class="composer-row">
-          <input type="text" id="chat-input" ="Type your question…" autocomplete="off" spellcheck="true" />
+          <input type="text" id="chat-input" placeholder="Type your question…" autocomplete="off" spellcheck="true" />
           <button class="send-btn" id="send-btn" aria-label="Send message">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
           </button>
@@ -478,19 +478,17 @@ const WEBHOOK_URL = "https://bhartiamit0703july21.app.n8n.cloud/webhook/igm-mitr
 const ORACLE_WEBHOOK_URL = "https://bhartiamit0703july21.app.n8n.cloud/webhook/gita-oracle";
 
 const DEMO_MODE = false; // must be false to actually call the webhooks
-//const WEBHOOK_IS_PLACEHOLDER = false;
+
 // Safety net: if someone forgets to edit the URLs above, force demo mode
 // and warn loudly in the console instead of silently failing every request.
-// const WEBHOOK_IS_PLACEHOLDER = WEBHOOK_URL.includes("https://bhartiamit0703july21.app.n8n.cloud/webhook/igm-mitra-chat") || ORACLE_WEBHOOK_URL.includes("https://bhartiamit0703july21.app.n8n.cloud/webhook/gita-oracle");
-// const EFFECTIVE_DEMO_MODE = DEMO_MODE || WEBHOOK_IS_PLACEHOLDER;
-// if (WEBHOOK_IS_PLACEHOLDER) {
-//   console.warn(
-//     "[IGM Mitra] One of the webhook URLs is still a placeholder value — running in DEMO MODE. " +
-//     "Replace WEBHOOK_URL / ORACLE_WEBHOOK_URL with your real n8n Production webhook URLs and set DEMO_MODE = false."
-//   );
-// }
-const WEBHOOK_IS_PLACEHOLDER = false;
-const EFFECTIVE_DEMO_MODE = false;
+const WEBHOOK_IS_PLACEHOLDER = WEBHOOK_URL.includes("YOUR-N8N-DOMAIN") || ORACLE_WEBHOOK_URL.includes("YOUR-N8N-DOMAIN");
+const EFFECTIVE_DEMO_MODE = DEMO_MODE || WEBHOOK_IS_PLACEHOLDER;
+if (WEBHOOK_IS_PLACEHOLDER) {
+  console.warn(
+    "[IGM Mitra] One of the webhook URLs is still a placeholder value — running in DEMO MODE. " +
+    "Replace WEBHOOK_URL / ORACLE_WEBHOOK_URL with your real n8n Production webhook URLs and set DEMO_MODE = false."
+  );
+}
 
 // Pick the correct production URL for the mode the visitor is currently in
 function activeWebhookUrl(mode){
